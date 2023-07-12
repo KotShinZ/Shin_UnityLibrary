@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace Shin_UnityLibrary
 {
-    public static class Utils
+    public static partial class Utils
     {
         public static T GetRandomInList<T>(this List<T> list)
         {
@@ -94,7 +94,7 @@ namespace Shin_UnityLibrary
         }
 
         /// <summary>
-        /// png‰æ‘œ‚ğpath‚É•Û‘¶‚µ‚Ü‚·
+        /// pngï¿½æ‘œï¿½ï¿½pathï¿½É•Û‘ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½
         /// </summary>
         /// <param name="texture"></param>
         /// <param name="path"></param>
@@ -105,7 +105,7 @@ namespace Shin_UnityLibrary
         }
 
         /// <summary>
-        /// ƒeƒNƒXƒ`ƒƒ‚Ì‰ğ‘œ“x‚ğ•ÏX‚µ‚Ü‚·B
+        /// ï¿½eï¿½Nï¿½Xï¿½`ï¿½ï¿½ï¿½Ì‰ğ‘œ“xï¿½ï¿½ÏXï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
         /// </summary>
         /// <param name="srcTexture"></param>
         /// <param name="newWidth"></param>
@@ -113,11 +113,11 @@ namespace Shin_UnityLibrary
         /// <returns></returns>
         public static Texture2D ResizeTexture(Texture2D texture, int width, int height)
         {
-            // ƒŠƒTƒCƒYŒã‚ÌƒTƒCƒY‚ğ‚ÂRenderTexture‚ğì¬‚µ‚Ä‘‚«‚Ş
+            // ï¿½ï¿½ï¿½Tï¿½Cï¿½Yï¿½ï¿½ÌƒTï¿½Cï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½RenderTextureï¿½ï¿½ï¿½ì¬ï¿½ï¿½ï¿½Äï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             var rt = RenderTexture.GetTemporary(width, height);
             Graphics.Blit(texture, rt);
 
-            // ƒŠƒTƒCƒYŒã‚ÌƒTƒCƒY‚ğ‚ÂTexture2D‚ğì¬‚µ‚ÄRenderTexture‚©‚ç‘‚«‚Ş
+            // ï¿½ï¿½ï¿½Tï¿½Cï¿½Yï¿½ï¿½ÌƒTï¿½Cï¿½Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Texture2Dï¿½ï¿½ï¿½ì¬ï¿½ï¿½ï¿½ï¿½RenderTextureï¿½ï¿½ï¿½ç‘ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             var preRT = RenderTexture.active;
             RenderTexture.active = rt;
             var ret = new Texture2D(width, height);
@@ -130,7 +130,7 @@ namespace Shin_UnityLibrary
         }
 
         /// <summary>
-        /// ˆê’è‚Ì’l‚ÌFloat[,]‚ğ•Ô‚µ‚Ü‚·
+        /// ï¿½ï¿½ï¿½Ì’lï¿½ï¿½Float[,]ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
@@ -150,7 +150,7 @@ namespace Shin_UnityLibrary
             return f;
         }
         /// <summary>
-        /// ˆê’è‚Ì’l‚ÌFloat[,]‚ğ•Ô‚µ‚Ü‚·
+        /// ï¿½ï¿½ï¿½Ì’lï¿½ï¿½Float[,]ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½
         /// </summary>
         /// <param name="width"></param>
         /// <param name="height"></param>
