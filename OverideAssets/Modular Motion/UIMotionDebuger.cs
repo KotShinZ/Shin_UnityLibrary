@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ModularMotion;
-using Sirenix.OdinInspector;
+using NaughtyAttributes;
 
 [RequireComponent(typeof(UIMotion))]
 public class UIMotionDebuger : MonoBehaviour

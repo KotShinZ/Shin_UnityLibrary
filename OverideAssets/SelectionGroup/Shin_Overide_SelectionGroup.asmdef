@@ -1,0 +1,25 @@
+{
+    "name": "Shin_Overide_SelectionGroup",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a1f2a1ae20746f947b43a9e2da5b01fc",
+        "GUID:ebccba9f4c7e8fc48821e0f8a180d57c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "Shin_UnityLibrary_SelectionGroup"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.selection-groups",
+            "expression": "",
+            "define": "Shin_Overide_SelectionGroup"
+        }
+    ],
+    "noEngineReferences": false
+}

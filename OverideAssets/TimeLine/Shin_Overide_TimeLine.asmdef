@@ -1,0 +1,18 @@
+{
+    "name": "Shin_Overide_TimeLine",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f06555f75b070af458a003d92f9efb00"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "Shin_UnityLibrary_TimeLine"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

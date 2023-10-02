@@ -1,0 +1,25 @@
+{
+    "name": "Shin_Overide_VisualCompositor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1c50246e8b7c5324da16991f9203d59f",
+        "GUID:776d03a35f1b52c4a9aed9f56d7b4229"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "Shin_UnityLibrary_VisualCompositor"
+    ],
+    "versionDefines": [
+        {
+            "name": "com.unity.visual-compositor",
+            "expression": "",
+            "define": "Shin_Overide_VisualCompositor"
+        }
+    ],
+    "noEngineReferences": false
+}
