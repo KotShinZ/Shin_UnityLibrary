@@ -12,6 +12,7 @@ public class SpawnerList : MonoBehaviour
     [TitleDescription] public string title = "Spawn()が呼ばれるとListに入っているオブジェクトを出現させる\nヒエラルキーにあるならその場所に、Prefabならオブジェクトの中心にスポーンされる";
 
     public List<GameObject> spawnList;
+    List<bool> isPrehub = new();
     public int spawnLimit = 1;
     public float interval = -1;
     public GameObject parent = null;
@@ -46,8 +47,27 @@ public class SpawnerList : MonoBehaviour
 
     public virtual void Start()
     {
-        spawnList.ForEach(g => { if (g != null && !IsPrefab(g)) g.SetActive(false); });
+        spawnList.ForEach(g => {g.SetActive(false); });
+        SetPrehubs();
     }
+
+    void SetPrehubs()
+    {
+#if UNITY_EDITOR
+        if(spawnList != null && spawnList.Count > 0)
+        for (int i = 0; i < spawnList.Count; i++)
+        {
+            var type = PrefabUtility.GetPrefabType(spawnList[i]);
+            isPrehub.Add(type == PrefabType.Prefab ||
+             type == PrefabType.ModelPrefab ||
+             type == PrefabType.PrefabInstance ||
+             type == PrefabType.ModelPrefabInstance ||
+             type == PrefabType.PrefabInstance);
+         ;
+        }
+#endif
+    }
+
     private void Update()
     {
         nowtime += Time.deltaTime;
@@ -97,22 +117,32 @@ public class SpawnerList : MonoBehaviour
         OnSpawnCalled.Invoke();
         await UniTask.Delay((int)(spawnDelayTime * 1000));
 
-        if(gameObject != null)
+        int n = 0;
+        try
         {
-            nowtime = 0;
-            spawnCount++;
-            var inses = SpawnObjects(spawnList);
-            if (isEffect) EffectSpawn(GetCenterPostion(inses));
+            if (gameObject != null)
+            {
+                nowtime = 0;
+                spawnCount++;
+                var inses = SpawnObjects(spawnList, n);
+                if (isEffect) EffectSpawn(GetCenterPostion(inses));
+                n++;
+            }
+        }
+        catch(System.Exception e)
+        {
+            Debug.LogAssertion(e);
         }
         
+        
 
-        List<GameObject> SpawnObjects(List<GameObject> objs)
+        List<GameObject> SpawnObjects(List<GameObject> objs, int n)
         {
             spawnList.ForEach(obj =>
             {
                 if (obj != null)
                 {
-                    var ins = SpawnObject(obj);
+                    var ins = SpawnObject(obj, n);
                     spawnedList.Add(ins);
                     spawned.Invoke();
                     if (destroyDelayTime != -1) Utils.DelayDestroy(ins, destroyDelayTime);
@@ -121,10 +151,10 @@ public class SpawnerList : MonoBehaviour
             return spawnedList;
         }
 
-        GameObject SpawnObject(GameObject obj)
+        GameObject SpawnObject(GameObject obj, int n)
         {
             GameObject ins;
-            if (IsPrefab(obj)) { ins = SpawnPrehub(obj); }
+            if (IsPrefab(obj, n)) { ins = SpawnPrehub(obj); }
             else ins = SpawnObj(obj);
             return ins;
         }
@@ -168,18 +198,9 @@ public class SpawnerList : MonoBehaviour
     /// </summary>
     /// <param name="self"></param>
     /// <returns></returns>
-    public bool IsPrefab(Object self)
+    public bool IsPrefab(Object self, int n)
     {
-        /*var type = PrefabUtility.GetPrefabType(self);
-
-        return
-            type == PrefabType.Prefab ||
-            type == PrefabType.ModelPrefab ||
-            type == PrefabType.PrefabInstance ||
-            type == PrefabType.ModelPrefabInstance ||
-            type == PrefabType.PrefabInstance
-        ;*/
-        return false;
+        return isPrehub[n];
     }
 
     /// <summary>

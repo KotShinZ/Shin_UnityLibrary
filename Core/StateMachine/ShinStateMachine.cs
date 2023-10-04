@@ -35,7 +35,6 @@ public class ShinStateMachine : MonoBehaviour
     {
         if(CanSetState(nowState , _state))
         {
-            Debug.Log(_state.name + "1");
             SetStateForce(_state).Forget();
         }
     }
@@ -91,10 +90,8 @@ public class ShinStateMachine : MonoBehaviour
         if (!canEnterState) return false; //ステートに入れない状態である
 
         if(nextState == preState && nextState.canEnterNowState == false) { return false; }
-        Debug.Log(nextState.name + "2");
         if (nextState.CanEnterState(preState, nextState))
         {
-            Debug.Log(nextState.name + "3");
             return true;
         }
         else return false;

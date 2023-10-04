@@ -171,6 +171,16 @@ namespace Shin_UnityLibrary
         {
             return Vector3.Dot(direction, _direction) > threshold;
         }
+        public bool isDirection(Direction direction, float threshold = 0.7f)
+        {
+            bool b = false;
+            var vectors = AttributeGetParam.GetAttrParamEnum<Vector3>(direction);
+            foreach (var v in vectors)
+            {
+                if (Vector3.Dot(this.direction, v) > threshold) b |= true;
+            }
+            return b;
+        }
 
         /// <summary>
         /// GetColliderEventも含めてGetComponentする

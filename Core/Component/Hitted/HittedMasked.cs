@@ -6,14 +6,15 @@ using UnityEngine;
 
 public class HittedMasked<T> : Hitted<T> where T : Component
 {
-    [FoldOut("Masks", true)][EnumFlags] public Direction direction = (Direction)63;
-    [FoldOut("Masks")][Label("方向の判定の大きさ（小さいほど判定が甘い）")]public float directionThreshold= 0.7f;
+    [FoldOut("Masks")][EnumFlags] public Direction direction = (Direction)63;
+    [FoldOut("Masks", true)]public float directionThreshold= 0.7f; // 方向の判定の大きさ（小さいほど判定が甘い）
     [FoldOut("Masks")] public IGetGravity gravity;
 
     [FoldOut("Masks", space = 10)] public LayerMask layerMask = int.MaxValue;
 
     [FoldOut("Masks", space = 10)] public bool isTag = false;
     [FoldOut("Masks")] public List<string> tags = new List<string>();
+    public int n;
 
     bool Layer(CollisionData<T> col)
     {
@@ -22,23 +23,18 @@ public class HittedMasked<T> : Hitted<T> where T : Component
 
     bool Direction(CollisionData<T> col)
     {
-        if(gravity == null)
-        {
-            var vectors = AttributeGetParam.GetAttrParamEnum<Vector3>(direction);
-            foreach (var v in vectors)
-            {
-                var b =col.isDirection(v);
-                if(b) return true;
-            }
-        }
-        else { return col.isDirection(gravity.GetGravityDirection()); }
-        return false;
+        var b = col.isDirection(direction);
+        return b;
     }
 
     bool Tag(CollisionData<T> col)
     {
         if (isTag) return Utils.CompereTag(col.component.gameObject, tags);
         else return true;
+    }
+    private void Update()
+    {
+        n = (int)direction;
     }
 
     public override bool isHit(CollisionData<T> col)

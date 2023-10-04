@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 using UnityEngine.Events;
+using Shin_UnityLibrary;
 
 public abstract class ShinAnimateState : ShinBaseState //ステートにアニメーション切り替えを同期させる
 {

@@ -1,13 +1,17 @@
 ﻿/// <summary>
-/// シーン名を管理する Enum
+/// シーン名を管理する Enuma
 /// </summary>
 public enum SceneNameEnum
 {
-	Title,
-	Main,
-	AddAlarm,
 	Maneger,
+	Title,
+	StageSelect,
+	Game_小谷_1,
+	Retry,
+	GameOver,
 	NowLoading,
-	Main_小谷,
+	GameClear,
 	Quit,
+	Game_小谷_2,
+	Tutorial,
 }

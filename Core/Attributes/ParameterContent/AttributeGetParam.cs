@@ -13,13 +13,10 @@ public static class AttributeGetParam
     /// <typeparam name="T">取得する型</typeparam>
     /// <param name="value">属性はIGetParamAttribute<T>を継承する必要がある</param>
     /// <returns></returns>
-    public static T GetAttrParam<T>(this object value)
+    public static T GetAttrParam<T>(Type type, string fieldName)
     {
-        //valueのタイプを取得
-        Type type = value.GetType();
-
         //フィールドを取得
-        FieldInfo field = type.GetField(value.ToString());
+        FieldInfo field = type.GetField(fieldName);
 
         //フィールドにRemarkAttributeが定義されていれば
         if (field.IsDefined(typeof(IGetParamAttribute<T>), true))
@@ -47,13 +44,11 @@ public static class AttributeGetParam
     public static List<T> GetAttrParamEnum<T>(this Enum value)
     {
         List<T> output = new List<T>();
-
-       
         Type type = value.GetType(); //valueのタイプを取得
         var list = Utils.GetEnumList(type); //全要素取得
         foreach ( var attr in list)
         {
-            if (value.HasFlag(attr)) output.Add(value.GetAttrParam<T>());
+            if (value.HasFlag(attr)) output.Add(GetAttrParam<T>(type, attr.ToString()));
         }
         
         return output;
