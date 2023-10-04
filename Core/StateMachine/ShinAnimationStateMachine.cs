@@ -9,7 +9,7 @@ using Cysharp.Threading.Tasks;
 /// </summary>
 public class ShinAnimationStateMachine : ShinStateMachine, IMoveable
 {
-    public ShinSimpleAnimation simpleAnimation;
+    [SerializeField] ShinSimpleAnimation simpleAnimation;
     //public bool Additive = false;
     //public AvatarMask avatarMask;
 
@@ -87,6 +87,7 @@ public class ShinAnimationStateMachine : ShinStateMachine, IMoveable
     /// </summary>
     public async UniTask PlayAnim(AnimationClip clip, float speed, float fadeTime = 0.6f)
     {
+        Debug.Log(clip.name+ " _ " + gameObject.name);
         if (clip == null) return;
         await simpleAnimation.CrossFade(clip, fadeTime, speed, default);
     }

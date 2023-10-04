@@ -130,8 +130,7 @@ public class SpawnerList : MonoBehaviour
             }
         }
         catch(System.Exception e)
-        {
-            Debug.LogAssertion(e);
+        { 
         }
         
         
