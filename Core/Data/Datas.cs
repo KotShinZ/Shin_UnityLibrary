@@ -171,13 +171,22 @@ namespace Shin_UnityLibrary
         {
             return Vector3.Dot(direction, _direction) > threshold;
         }
-        public bool isDirection(Direction direction, float threshold = 0.7f)
+        public bool isDirection(Direction direction, float threshold = 0.7f, Quaternion? gravityObject = null)
         {
             bool b = false;
             var vectors = AttributeGetParam.GetAttrParamEnum<Vector3>(direction);
             foreach (var v in vectors)
             {
-                if (Vector3.Dot(this.direction, v) > threshold) b |= true;
+                var vec = v;
+                if(gravityObject != null)
+                {
+                    //Debug.Log("_______");
+                    //Debug.Log(vec);
+                    //Debug.Log(gravityObject);
+                    vec = (Quaternion)gravityObject * vec;
+                    //Debug.Log(vec);
+                }
+                if (Vector3.Dot(this.direction, vec) > threshold) b |= true;
             }
             return b;
         }

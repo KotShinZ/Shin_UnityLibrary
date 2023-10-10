@@ -150,6 +150,12 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     {
         bool b = false;
         hitsList.ForEach(h => b |= (h.component.Equals(collision.gameObject)));
+        
+        if (collision.gameObject.name == "Hole" && gameObject.name == "IsInAir")
+        {
+            Debug.Log(gameObject.name);
+            Debug.Log(b);
+        }
         if (!b) AddCollision(collision);
     }
     public void OnCollisionStay(Collision collision)
@@ -159,17 +165,14 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
 
     public virtual void TriggerStay(Collider collider)
     {
-        /*bool flag = false;
-        List<CollisionData> newHits = new List<CollisionData>(hits);
-        foreach (var p in newHits)
+        bool b = false;
+        hitsList.ForEach(h => b |= (h.component.Equals(collider.gameObject)));
+        if (collider.gameObject.name == "HoleArea" && gameObject.name == "IsInAir")
         {
-            if (p.Equal(collision)) { flag = true; continue; }
-            else
-            {
-                OnTriggerEnter(collision);
-            }
+            Debug.Log(gameObject.name);
+            Debug.Log(b);
         }
-        if (flag == false) OnTriggerExit(collision);*/
+        if (!b) AddCollision(collider);
     }
     public void OnTriggerStay(Collider collision)
     {
