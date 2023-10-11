@@ -10,7 +10,6 @@ using System.Threading;
 using System.Reflection;
 using UnityEngine.EventSystems;
 using Component = UnityEngine.Component;
-using Unity.Plastic.Newtonsoft.Json;
 using System.Data;
 
 namespace Shin_UnityLibrary
@@ -649,9 +648,9 @@ namespace Shin_UnityLibrary
         /// <param name="obj">オブジェクト</param>
         /// <param name="pass">(Assets/)+ Data + (/name) など</param>
         /// <param name="name">data + (.json) など</param>
-        public static void SaveJsonDictionary<T,S>(IDictionary<T, S> dict, string pass, string name = "data")
+        public static void SaveJsonDictionary<T, S>(IDictionary<T, S> dict, string pass, string name = "data")
         {
-            var str = SerializeDictionaryToJson<T,S>(dict);
+            var str = SerializeDictionaryToJson<T, S>(dict);
 
             //ファイルがないなら作る
             if (!System.IO.Directory.Exists(Application.dataPath + "/" + pass))
@@ -683,7 +682,7 @@ namespace Shin_UnityLibrary
                 datastr = reader.ReadToEnd();
                 reader.Close();
 
-                return DeserializeJsonToDictionary<T,S>(datastr);
+                return DeserializeJsonToDictionary<T, S>(datastr);
             }
             catch
             {
@@ -691,9 +690,9 @@ namespace Shin_UnityLibrary
             }
         }
 
-        public static string SerializeDictionaryToJson<T,S>(IDictionary<T,S> dict)
+        public static string SerializeDictionaryToJson<T, S>(IDictionary<T, S> dict)
         {
-            List<SerializableKeyValuePair<T,S>> list = new List<SerializableKeyValuePair<T, S>>();
+            List<SerializableKeyValuePair<T, S>> list = new List<SerializableKeyValuePair<T, S>>();
             foreach (KeyValuePair<T, S> pair in dict)
             {
                 SerializableKeyValuePair<T, S> serializablePair = new SerializableKeyValuePair<T, S>();
@@ -701,7 +700,7 @@ namespace Shin_UnityLibrary
                 serializablePair.value = pair.Value;
                 list.Add(serializablePair);
             }
-            ListExample<T, S> listExample = new ListExample<T,S>();
+            ListExample<T, S> listExample = new ListExample<T, S>();
             listExample.list = list;
             return JsonUtility.ToJson(listExample);
         }
@@ -727,7 +726,7 @@ public class SerializableKeyValuePair<K, V>
 }
 
 [System.Serializable]
-public class ListExample<T,S>
+public class ListExample<T, S>
 {
     public List<SerializableKeyValuePair<T, S>> list = new List<SerializableKeyValuePair<T, S>>();
 }

@@ -11,7 +11,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEditor.PackageManager.UI;
 using UnityEngine;
@@ -53,11 +52,11 @@ public class OverideDefineWindow : EditorWindow
     {
         EditorGUILayout.LabelField("Welcome!!");
         EditorGUILayout.Space(15);
-        EditorGUILayout.LabelField("ƒTƒ|[ƒg‚·‚éŠO•”ƒAƒZƒbƒg‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢");
+        EditorGUILayout.LabelField("ï¿½Tï¿½|ï¿½[ï¿½gï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½Aï¿½Zï¿½bï¿½gï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         EditorGUILayout.Space(10);
 
         var tmpDict = new Dictionary<string, bool>(dict);
-        foreach(var pair in tmpDict)
+        foreach (var pair in tmpDict)
         {
             var key = pair.Key;
             dict[key] = EditorGUILayout.Toggle(pair.Key, dict[key]);
@@ -78,7 +77,7 @@ public class OverideDefineWindow : EditorWindow
 
         foreach (var dictStr in dict)
         {
-            if (dictStr.Value) //’Ç‰Á‚·‚é
+            if (dictStr.Value) //ï¿½Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 listStr.Add("Shin_UnityLibrary_" + dictStr.Key);
             }
@@ -91,7 +90,7 @@ public class OverideDefineWindow : EditorWindow
 
         //dict.ForEach(d => Debug.Log(d.Key));
         Utils.SaveJsonDictionary(dict, "Shin_UnityLibrary_Data", "OverideDefineData");
-        if(defines != prestr) PlayerSettings.SetScriptingDefineSymbolsForGroup(target, defines);
+        if (defines != prestr) PlayerSettings.SetScriptingDefineSymbolsForGroup(target, defines);
     }
 
     public static void ResetData()
@@ -99,7 +98,7 @@ public class OverideDefineWindow : EditorWindow
         dict = defoltDict;
     }
 
-    
+
     bool isContainStr(IEnumerable<string> list, string key)
     {
         foreach (var s in list)
@@ -118,7 +117,7 @@ public class LoadOverideDatas
 {
     static LoadOverideDatas()
     {
-       var dict = Utils.LoadJsonDictionary<string, bool>("Shin_UnityLibrary_Data", "OverideDefineData");
+        var dict = Utils.LoadJsonDictionary<string, bool>("Shin_UnityLibrary_Data", "OverideDefineData");
         if (dict != null && dict != OverideDefineWindow.dict) OverideDefineWindow.dict = dict;
     }
 }
