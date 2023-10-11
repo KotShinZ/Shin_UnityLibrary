@@ -9,7 +9,7 @@ public class CollisionListMasked<T> : CollisionList<T> where T : Component
 {
     [Space(19), Header("Masks")]
     [EnumFlags]public Direction direction;
-    public IGetGravity gravity;
+    [Label("向きの基準となるオブジェクト(Nullだとワールド座標系となる)")] public Transform gravityObject;
 
     [Space(10)]
     public LayerMask layerMask = int.MaxValue;
@@ -24,8 +24,14 @@ public class CollisionListMasked<T> : CollisionList<T> where T : Component
     }
 
     bool Direction(CollisionData<T> col) {
-        Vector3 gravityVec = gravity == null ? AttributeGetParam.GetAttrParamEnum<Vector3>(direction).Aggregate((x, y) => x + y) : gravity.GetGravityDirection(); //重力の方向を取得
-        return col.isDirection(gravityVec);
+        if(gravityObject == null)
+        {
+            return col.isDirection(direction);
+        }
+        else
+        {
+            return col.isDirection(direction, gravityObject : gravityObject.rotation);
+        }
     }
 
     bool Tag(CollisionData<T> col)
