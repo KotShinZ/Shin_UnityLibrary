@@ -20,9 +20,6 @@ using System.Linq;
 using UnityEditor.Build;
 using Shin_UnityLibrary;
 using System.ComponentModel;
-using UnityEngine.Experimental.Playables;
-using Ludiq.OdinSerializer.Utilities;
-using static UnityEditor.ShaderData;
 
 public class OverideDefineWindow : EditorWindow
 {
@@ -92,7 +89,7 @@ public class OverideDefineWindow : EditorWindow
         }
         var defines = string.Join(";", listStr);
 
-        dict.ForEach(d => Debug.Log(d.Key));
+        //dict.ForEach(d => Debug.Log(d.Key));
         Utils.SaveJsonDictionary(dict, "Shin_UnityLibrary_Data", "OverideDefineData");
         if(defines != prestr) PlayerSettings.SetScriptingDefineSymbolsForGroup(target, defines);
     }

@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
-using UnityEngine.InputSystem;
 
 namespace Shin_UnityLibrary
 {
