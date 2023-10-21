@@ -12,8 +12,14 @@ public class DerivedClass : IDisposable
 
     public int n; //選択のint表現
 
-    public List<Type> list { get { if (_list == null) FirstGetList(); return _list; } }
-    public List<Type> _list;
+    public List<Type> list
+    {
+        get
+        {
+            if (allTypeList == null || allTypeList.Count == 0) { FirstGetList(); }
+            return GetDerivedClass.instance.GetSelectedClassesByN(n, allTypeList); //選択しているクラスを取得;
+        }
+    }
     public List<string> allClassList;
     public List<Type> allTypeList;
 
@@ -68,12 +74,10 @@ public class DerivedClass : IDisposable
     public void Init()
     {
 #if UNITY_EDITOR
-        if (type == null) type = Utils.GetTypeFromString(typeString); //一応
-        if (allClassList == null) allClassList = GetDerivedClass.instance.LoadDerivedClassListString(type);//クラスの全リストを取得
+        type = Utils.GetTypeFromString(typeString); //一応
+        allClassList = GetDerivedClass.instance.LoadDerivedClassListString(type);//クラスの全リストを取得
 #endif
-        if (allTypeList == null) allTypeList = allClassList.CastList(t => Utils.GetTypeFromString(t));
-
-        _list = GetDerivedClass.instance.GetSelectedClassesByN(n, allTypeList); //選択しているクラスを取得
+        allTypeList = allClassList.CastList(t => Utils.GetTypeFromString(t));
     }
 
     /// <summary>

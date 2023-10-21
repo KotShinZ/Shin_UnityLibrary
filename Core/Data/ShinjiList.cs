@@ -41,15 +41,21 @@ public static class ListExtension
         return components;
     }
 
-    public static void DebugList<T>(this IList<T> list)
+    public static void Debug<T>(this IList<T> list)
     {
-        for(int i = 0; i < list.Count;i++)
+        string str = "";
+        str += "List<";
+        str += typeof(T).Name;
+        str += "> : Count ";
+        str += list.Count;
+
+        for (int i = 0; i < list.Count;i++)
         {
+            str += "\n";
             var l = list[i];
-            Debug.Log(typeof(T).Name + "  List");
-            Debug.Log("Count   "+list.Count);
-            Debug.Log(i + "  " + l == null);
+            str += i.ToString() + " : " + (l == null ? null : l.ToString());
         }
+        UnityEngine.Debug.Log(str);
     }
 
     /// <summary>
