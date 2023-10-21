@@ -29,7 +29,7 @@ public static class SceneNameEnumCreator
     private const string ITEM_NAME = "Tools/Shin_UnityLibrary/Create Scene Name Enum";
 
     // ファイルパス
-    private const string PATH = "Assets/Shin_UnityLibrary_Data/SceneNameEnum.cs";
+    private const string PATH = "Assets/Shin_UnityLibrary/Core/Shin_UnityLibrary_Data/SceneNameEnum.cs";
 
     // ファイル名(拡張子あり)
     private static readonly string FILENAME = Path.GetFileName(PATH);
@@ -63,8 +63,8 @@ public static class SceneNameEnumCreator
             .AppendLine("/// シーン名を管理する Enum")
             .AppendLine("/// </summary>")
             .AppendLine($"public enum {FILENAME_WITHOUT_EXTENSION}")
-            .AppendLine("{");
-
+            .AppendLine("{")
+            .AppendLine("None,");
         foreach (var n in EditorBuildSettings.scenes
             .Select(c => Path.GetFileNameWithoutExtension(c.path))
             .Distinct()

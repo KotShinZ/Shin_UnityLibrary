@@ -29,7 +29,9 @@ public class SingletonMonoBehaviour<T> : MonoBehaviourWithInit where T :MonoBeha
                 //シーン内に存在しない場合はエラー
                 if (_instance == null)
                 {
-                    _instance = new T();
+                    var obj = new GameObject(typeof(T).Name);
+                    _instance = obj.AddComponent<T>();
+                
                     _instance.InitIfNeeded();
                 }
                 //発見した場合は初期化

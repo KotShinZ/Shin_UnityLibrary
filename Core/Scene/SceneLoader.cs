@@ -25,13 +25,13 @@ public static class SceneLoader
     }
     public static void SetActiveSceneSafe(Scene s)
     {
-        if(GetActiveScenes() == SceneNameEnum.Maneger || GetActiveScenes() == SceneNameEnum.NowLoading)
+        /*if(GetActiveScenes() == SceneNameEnum.Maneger || GetActiveScenes() == SceneNameEnum.NowLoading)
         {
-            /* if (IsLoaded(SceneNameEnum.Game.ToString()) == true)
+             if (IsLoaded(SceneNameEnum.Game.ToString()) == true)
             {
                 SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNameEnum.Game.ToString()));
-            }*/
-        }
+            }
+        }*/
         if (s.name != null && IsLoaded(s.ToString()) == true)
         {
             SceneManager.SetActiveScene(s);
@@ -54,7 +54,7 @@ public static class SceneLoader
     public static SceneNameEnum GetActiveScenes(string str)
     {
         SceneNameEnum s;
-        Enum.TryParse<SceneNameEnum>(str, out s);
+        Enum.TryParse(str, out s);
         return s;
     }
 
@@ -82,16 +82,30 @@ public static class SceneLoader
         }
     }
 
-    public static async UniTask Load(SceneNameEnum scenes, bool isNowLoading = true, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    /// <summary>
+    /// ローディングをはさむ
+    /// </summary>
+    /// <param name="loadingScene"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static async UniTask LoadingScene(SceneNameEnum loadingScene,  Func<UniTask> action)
     {
-        if (isNowLoading) await LoadNoActive(SceneNameEnum.NowLoading);
+        if(loadingScene != SceneNameEnum.None) await LoadNoActive(loadingScene);
 
-        await WaitTime(t);
-        await SceneManager.LoadSceneAsync(scenes.ToString(), loadSceneMode);
-        SetActiveSceneSafe(SceneManager.GetSceneByName(scenes.ToString()));
-        Shin_UnityLibrary.SaveManager.instance.Save();
+        await action();
 
-        if (isNowLoading) await Unload(SceneNameEnum.NowLoading);
+        if(loadingScene != SceneNameEnum.None) await Unload(loadingScene);
+    }
+
+    public static async UniTask Load(SceneNameEnum scenes, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    {
+        await LoadingScene(loadingScene, async () =>
+        {
+            await WaitTime(t);
+            await SceneManager.LoadSceneAsync(scenes.ToString(), loadSceneMode);
+            SetActiveSceneSafe(SceneManager.GetSceneByName(scenes.ToString()));
+            Shin_UnityLibrary.SaveManager.instance.Save();
+        });
     }
     public static async UniTask LoadNoActive(SceneNameEnum scenes, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
@@ -100,39 +114,50 @@ public static class SceneLoader
         SetActiveSceneSafe(s);
     }
 
-    public static async UniTask Replace(SceneNameEnum scenes, bool isNowLoading = true, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    public static async UniTask Replace(SceneNameEnum scenes, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
-        if (isNowLoading) await LoadNoActive(SceneNameEnum.NowLoading);
-
-        await WaitTime(t);
-        await Unload(GetActiveScenes());
-        await SceneManager.LoadSceneAsync(scenes.ToString(), loadSceneMode);
-        SceneManager.SetActiveScene(SceneManager.GetSceneByName(scenes.ToString()));
-
-        if (isNowLoading) await Unload(SceneNameEnum.NowLoading);
-    }
-
-    public static async UniTask OnlyManeger(SceneNameEnum scenes, bool isNowLoading = true, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
-    {
-        await WaitTime(t);
-        await LoadNoActive(SceneNameEnum.NowLoading);
-
-        List<string> str = new List<string>();
-        foreach (var scene in SceneManager.GetAllScenes())
+        await LoadingScene(loadingScene, async () =>
         {
-            var sc = GetActiveScenes(scene.name);
-            if (!(sc == SceneNameEnum.Maneger || sc == SceneNameEnum.NowLoading))
-            {
-                Debug.Log(sc.ToString());
-                await Unload(sc);
-            }
-        }
-
-        await Load(scenes, false, 0, LoadSceneMode.Additive);
-
-        await Unload(SceneNameEnum.NowLoading);
+            await WaitTime(t);
+            await Unload(GetActiveScenes());
+            await SceneManager.LoadSceneAsync(scenes.ToString(), loadSceneMode);
+            SceneManager.SetActiveScene(SceneManager.GetSceneByName(scenes.ToString()));
+        });
     }
 
+    /// <summary>
+    /// あるシーンだけ残してをシーンをロードする
+    /// </summary>
+    /// <param name="scenes"></param>
+    /// <param name="isNowLoading"></param>
+    /// <param name="t"></param>
+    /// <param name="loadSceneMode"></param>
+    /// <returns></returns>
+    public static async UniTask OnlyScenes(SceneNameEnum scenes, List<SceneNameEnum> onlyScenes, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    {
+        await WaitTime(t);
+
+        await LoadingScene(loadingScene, async () =>
+        {
+            foreach (var scene in SceneManager.GetAllScenes()) //マネージャーScene以外Unload
+            {
+                var sc = GetActiveScenes(scene.name);
+
+                if(loadingScene != SceneNameEnum.None && sc == loadingScene) { continue; } //Loadingはアンロードしない
+                //Debug.Log(sc.ToString());
+                if (!onlyScenes.Contains(sc))
+                {
+                    //Debug.Log(sc.ToString() + "_______");
+                    await Unload(sc);
+                }
+            }
+            await Load(scenes, loadingScene: SceneNameEnum.None, 0, LoadSceneMode.Additive);
+        });
+    }
+    public static async UniTask OnlyScenes(SceneNameEnum scenes, SceneNameEnum onlyScene, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
+    {
+        await OnlyScenes(scenes, new List<SceneNameEnum>() { onlyScene }, loadingScene, t, loadSceneMode);
+    }
     #endregion
 }
 

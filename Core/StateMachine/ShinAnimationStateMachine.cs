@@ -87,7 +87,7 @@ public class ShinAnimationStateMachine : ShinStateMachine, IMoveable
     /// </summary>
     public async UniTask PlayAnim(AnimationClip clip, float speed, float fadeTime = 0.6f)
     {
-        Debug.Log(clip.name+ " _ " + gameObject.name);
+        //Debug.Log(clip.name+ " _ " + gameObject.name);
         if (clip == null) return;
         await simpleAnimation.CrossFade(clip, fadeTime, speed, default);
     }

@@ -17,6 +17,7 @@ public partial class Damageable : MonoBehaviour
     public float hitForwardRotation = 360.0f;
 
     public bool isInvulnerable { get; set; }
+    public bool isDeath => currentHitPoints <= 0;
     public virtual int currentHitPoints
     {
         get { return m_currentHitPoints; }

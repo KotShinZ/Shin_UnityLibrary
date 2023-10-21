@@ -115,7 +115,7 @@ namespace Shin_UnityLibrary
     }
 
     [Serializable]
-    public class CollisionData<T> where T : UnityEngine.Component
+    public struct CollisionData<T> where T : UnityEngine.Component
     {
         private int ID;
         public T component;
@@ -131,16 +131,23 @@ namespace Shin_UnityLibrary
         /// <param name="hitted">あてられた方</param>
         public CollisionData(T _component, Collider col, Transform hitted)
         {
-            ID = col.gameObject.GetInstanceID();
-            Init(_component, HitType.Trigger, Vector3.Normalize(col.ClosestPointOnBounds(hitted.position) - hitted.position), hitted);
+            this.ID = _component.gameObject.GetInstanceID();
+            this.component = _component;
+            this.hitType = HitType.Trigger;
+            this.direction = Vector3.Normalize(col.ClosestPointOnBounds(hitted.position) - hitted.position);
+            this.hitted = hitted;
         }
         public CollisionData(T _component, Collision col, Transform hitted)
         {
-            ID = col.gameObject.GetInstanceID();
-            Init(_component, HitType.Collision, Vector3.Normalize(col.contacts.Last().point - hitted.position), hitted);
+            this.ID = _component.gameObject.GetInstanceID();
+            this.component = _component;
+            this.hitType = HitType.Collision;
+            this.direction = Vector3.Normalize(col.contacts.Last().point - hitted.position);
+            this.hitted = hitted;
         }
         public CollisionData(T component, HitType hitType, Vector3 direction, Transform hitted)
         {
+            this.ID = component.gameObject.GetInstanceID();
             this.component = component;
             this.hitType = hitType;
             this.direction = Vector3.Normalize(direction);
@@ -149,6 +156,7 @@ namespace Shin_UnityLibrary
 
         public void Init(T component, HitType hitType, Vector3 direction, Transform hitted)
         {
+            this.ID = component.gameObject.GetInstanceID();
             this.component = component;
             this.hitType = hitType;
             this.direction = Vector3.Normalize(direction);
@@ -214,7 +222,7 @@ namespace Shin_UnityLibrary
                 var newData = new CollisionData<S>(c, hitType, direction, hitted);
                 return newData;
             }
-            else { return null; }
+            else { return new CollisionData<S>(); }
         }
     }
     public enum HitType
@@ -223,17 +231,17 @@ namespace Shin_UnityLibrary
         Collision
     }
 
-    public class TypeEqaulObject
+    public interface ITypeEqaulObject
     {
-        public override int GetHashCode()
+        public int GetHashCode()
         {
             Debug.Log(this.GetType());
             return this.GetType().GetHashCode();
         }
 
-        public override bool Equals(object obj)
+        public bool Equals(object obj)
         {
-            TypeEqaulObject ins = obj as TypeEqaulObject;
+            ITypeEqaulObject ins = obj as ITypeEqaulObject;
             if (ins == null) return false;
             return ins.GetType() == this.GetType();
         }

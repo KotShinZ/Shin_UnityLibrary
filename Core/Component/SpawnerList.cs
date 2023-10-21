@@ -16,6 +16,7 @@ public class SpawnerList : MonoBehaviour
     public int spawnLimit = 1;
     public float interval = -1;
     public GameObject parent = null;
+    public bool initSpawn = false;
 
     [FoldOut("Delay", true)] public float spawnDelayTime = 0.3f;
     [FoldOut("Delay")] public float destroyDelayTime = -1;
@@ -29,7 +30,7 @@ public class SpawnerList : MonoBehaviour
     [FoldOut("Offset")] public Vector3 scaleOffset = Vector3.one;
 
     [FoldOut("Effect", true)] public bool isEffect = true;
-    [FoldOut("Effect"), Header("nullならデフォルトのエフェクトになる")] public GameObject effect;
+    [FoldOut("Effect")] public GameObject effect;
     [FoldOut("Effect")] public Vector3 effectPositionOffset = Vector3.zero;
     [FoldOut("Effect")] public Vector3 effectRotationOffset = Vector3.zero;
     [FoldOut("Effect")] public Vector3 effectScaleOffset = Vector3.one;
@@ -49,6 +50,7 @@ public class SpawnerList : MonoBehaviour
     {
         spawnList.ForEach(g => {g.SetActive(false); });
         SetPrehubs();
+        if(initSpawn) Spawn();
     }
 
     void SetPrehubs()
@@ -79,6 +81,13 @@ public class SpawnerList : MonoBehaviour
     public virtual void Spawn()
     {
         SpawnObj();
+    }
+    public virtual void SpawnNum(int num)
+    {
+        for (int i = 0;i < num;i++)
+        {
+            Spawn();
+        }
     }
 
     /// <summary>

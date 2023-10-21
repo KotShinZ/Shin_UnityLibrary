@@ -17,7 +17,7 @@ public abstract class ShinAnimateState : ShinBaseState //ステートにアニ�
 
     [Space(10)]
     [SelectDerivedClass("選択されたステートからのみ、このステートに遷移可能")]
-    public DerivedClass selectedAnimations;
+    public DerivedClass selectedAnimations = null;
 
     [Label("優先度が低いステートに進むことが出来るか？")] public bool isBreak = false;
 
@@ -188,10 +188,10 @@ public abstract class ShinAnimateState : ShinBaseState //ステートにアニ�
     /// <returns></returns>
     public bool isEnterFromSelectedList(ShinBaseState preState)
     {
-        foreach (string state in selectedAnimations.list)
+        foreach(var state in selectedAnimations.list)
         {
             //Debug.Log(preState.GetType().FullName + "==" + state + " , ");
-            if (preState.GetType().FullName == state)
+            if (preState.GetType() == state)
             {
                 return true;
             }
@@ -204,9 +204,12 @@ public abstract class ShinAnimateState : ShinBaseState //ステートにアニ�
     /// </summary>
     public virtual void Reset()
     {
-        Debug.Log(SetSelectType());
-        selectedAnimations = new(SetSelectType());
-        Debug.Log(selectedAnimations.typeString);
+        if (selectedAnimations == null) selectedAnimations = new(SetSelectType(), addToObject: this);
+    }
+
+    public virtual void OnEnable()
+    {
+        if(selectedAnimations == null) selectedAnimations = new(SetSelectType(), addToObject: this);
     }
 
     public abstract Type SetSelectType();

@@ -23,10 +23,10 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
 
     private bool dummy= false;
     public int hitInterval;
-    [HideInInspector] public CollisionData<T> nowHit = null;
+    [HideInInspector] public CollisionData<T> nowHit;
     [HideInInspector] public bool nowHitFrame = false;
     [HideInInspector] public HitType nowHitType;
-    public bool isHitting => hits != null;
+    public bool isHitting => hits != null && hits.Count != 0;
 
     public GetColliderEvent getColliderEvent = null;
 
@@ -75,11 +75,16 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     public void AddCollision(Collision col)
     {
         if (!collision) return;
-        
+        if (isAddListObject(col.gameObject) == false) return;
         T p = col.gameObject.GetComponentWithGetColliderEvent<T>();
         if (p != null)
         {
-            if(hitsList.Find(h => h.component.Equals(p)) == null)
+            bool b = true;
+            foreach(var h in hitsList)
+            {
+                if (h.component.Equals(p)) { b = false; break; } //”í‚è‚Å‚Í‚È‚©‚Á‚½‚ç
+            }
+            if(b)
             {
                 nowHit = new CollisionData<T>(p, col, transform);
                 if (isAddList(nowHit)) SetEnterCollision(nowHit);
@@ -89,11 +94,16 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     public void AddCollision(Collider col)
     {
         if (!trigger) return;
-
+        if (isAddListObject(col.gameObject) == false) return;
         T p = col.gameObject.GetComponentWithGetColliderEvent<T>();
         if (p != null)
         {
-            if (hitsList.Find(h => h.component.Equals(p)) == null)
+            bool b = true;
+            foreach (var h in hitsList)
+            {
+                if (h.component.Equals(p)) { b = false; break; } //”í‚è‚Å‚Í‚È‚©‚Á‚½‚ç
+            }
+            if (b)
             {
                 nowHit = new CollisionData<T>(p, col, transform);
                 if (isAddList(nowHit)) SetEnterCollision(nowHit);
@@ -122,7 +132,6 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     void SetEnterCollision(CollisionData<T> data)
     {
         OnEnter.Invoke(data);
-
         nowHitType = data.hitType;
         nowHitFrame = true;
 
@@ -139,7 +148,7 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
             AddCollision(col);
         }
     }
-    public void OnCollisionEnter(UnityEngine.Collision col)
+    public void OnCollisionEnter(Collision col)
     {
         if (collision && getColliderEvent == null)
         {
@@ -148,15 +157,11 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     }
     public virtual void CollisionStay(Collision collision)
     {
-        bool b = false;
-        hitsList.ForEach(h => b |= (h.component.Equals(collision.gameObject)));
-        
-        if (collision.gameObject.name == "Hole" && gameObject.name == "IsInAir")
+        foreach (var h in hitsList)
         {
-            Debug.Log(gameObject.name);
-            Debug.Log(b);
+            if (h.component.gameObject.Equals(collision.gameObject)) { return; } //”í‚è‚Å‚Í‚È‚©‚Á‚½‚ç
         }
-        if (!b) AddCollision(collision);
+        AddCollision(collision);
     }
     public void OnCollisionStay(Collision collision)
     {
@@ -165,14 +170,13 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
 
     public virtual void TriggerStay(Collider collider)
     {
-        bool b = false;
-        hitsList.ForEach(h => b |= (h.component.Equals(collider.gameObject)));
-        if (collider.gameObject.name == "HoleArea" && gameObject.name == "IsInAir")
+        /*if (isAddListObject(collider.gameObject) == false) return;
+        foreach (var h in hitsList)
         {
-            Debug.Log(gameObject.name);
-            Debug.Log(b);
+            if (h.component.gameObject.Equals(collider.gameObject)) { return; } //”í‚è‚Å‚Í‚È‚©‚Á‚½‚ç
         }
-        if (!b) AddCollision(collider);
+        AddCollision(collider);
+        */
     }
     public void OnTriggerStay(Collider collision)
     {
@@ -192,14 +196,12 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
         if (p != null)
         {
             var h = hitsList.Find(h => h.component.Equals(p));
-            if (h != null)
-            {
-                OnExit.Invoke(h);
-                hitsList.Remove(h);
-                //if (gameObject.name == "Player") Debug.Log("Remove");
-                onExit?.Invoke(h);
-                Exit(h);
-            }
+
+            OnExit.Invoke(h);
+            hitsList.Remove(h);
+            //if (gameObject.name == "Player") Debug.Log("Remove");
+            onExit?.Invoke(h);
+            Exit(h);
         }
     }
 
@@ -209,6 +211,10 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     /// <param name="col"></param>
     /// <returns></returns>
     public virtual bool isAddList(CollisionData<T> col)
+    {
+        return true;
+    }
+    public virtual bool isAddListObject(GameObject col)
     {
         return true;
     }

@@ -67,7 +67,6 @@ public class ShinStateMachine : MonoBehaviour
     public async UniTask SetStateForce(ShinBaseState _state)
     {
         isStateSetting = true; //ステートの設定中である。
-
         if (nowState != null) { await nowState.OnStateExit(this); }  //ステートから出る
         nowState = _state; //現在のステートを設定
         await _state.m_OnStateEnter(this);

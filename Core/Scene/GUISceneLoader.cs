@@ -7,6 +7,7 @@ using UniRx;
 using System;
 using UnityEngine.Experimental.GlobalIllumination;
 using NaughtyAttributes;
+using System.Linq;
 
 public class GUISceneLoader : MonoBehaviour
 {
@@ -18,13 +19,21 @@ public class GUISceneLoader : MonoBehaviour
     public Subject<int> UpdateAudio = new();
     public Subject<int> MethodAudio = new();
 
+    public SceneNameEnum loadingScene;
+
+    public void Reset()
+    {
+        var enums = Enum.GetNames(typeof(SceneNameEnum));
+        if (enums.Contains("NowLoading")) loadingScene = (SceneNameEnum)Enum.Parse(typeof(SceneNameEnum), "NowLoading");
+    }
+
     private async void Start()
     {
         for (int i = 0; i < StartKeyScene.Count; i++)
         {
             var k = StartKeyScene[i];
             LateStartAudio(i);
-            await k.LoadTypeScene();
+            await k.LoadTypeScene(loadingScene);
         }
     }
     async void LateStartAudio(int i)
@@ -56,23 +65,22 @@ public class GUISceneLoader : MonoBehaviour
                     await SceneLoader.WaitTime(k.delay);
                 }
             }
-
-            await SceneLoader.LoadNoActive(SceneNameEnum.NowLoading);
+            await SceneLoader.LoadNoActive(loadingScene);
             foreach (var k in UpdateKeyScene)
             {
                 if (k.flag)
                 {
-                    await k.LoadTypeScene();
+                    await k.LoadTypeScene(loadingScene);
                 }
             }
-            await SceneLoader.Unload(SceneNameEnum.NowLoading);
+            await SceneLoader.Unload(loadingScene);
         }
     }
 
     public void LoadKeyScene(int num)
     {
         MethodAudio.OnNext(num);
-        MethodKeyScene[num].LoadTypeScene().Forget();
+        MethodKeyScene[num].LoadTypeScene(loadingScene).Forget();
     }
 }
 
@@ -87,7 +95,7 @@ public class KeySceneLoad
     [HideInInspector] public bool flag;
 
 
-    public async UniTask LoadTypeScene()
+    public async UniTask LoadTypeScene(SceneNameEnum loadingScene = SceneNameEnum.None)
     {
         SceneNameEnum sceneName = scenes;
         var activescene = SceneManager.GetActiveScene();
@@ -97,11 +105,11 @@ public class KeySceneLoad
         switch (type)
         {
             case LoadSceneType.Single:
-                await SceneLoader.Load(sceneName, false, 0, LoadSceneMode.Single);
+                await SceneLoader.Load(sceneName, loadingScene, 0, LoadSceneMode.Single);
                 break;
 
             case LoadSceneType.Additive:
-                await SceneLoader.Load(sceneName, false, 0, LoadSceneMode.Additive);
+                await SceneLoader.Load(sceneName, loadingScene, 0, LoadSceneMode.Additive);
                 break;
 
             case LoadSceneType.Unload:
@@ -109,11 +117,11 @@ public class KeySceneLoad
                 break;
 
             case LoadSceneType.Replace:
-                await SceneLoader.Replace(sceneName, false, 0, LoadSceneMode.Additive);
+                await SceneLoader.Replace(sceneName, loadingScene, 0, LoadSceneMode.Additive);
                 break;
 
             case LoadSceneType.OnlyManegerSingle:
-                await SceneLoader.OnlyManeger(sceneName);
+                await SceneLoader.OnlyScenes(sceneName, SceneNameEnum.Maneger, loadingScene);
                 break;
 
             case LoadSceneType.LoadWaiting:

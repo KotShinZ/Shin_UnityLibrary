@@ -77,6 +77,77 @@ namespace Shin_UnityLibrary
         }
 
         /// <summary>
+        /// 正規分布に基づいてランダムな値を生成する関数
+        /// </summary>
+        /// <param name="mean"></param>
+        /// <param name="standardDeviation"></param>
+        /// <returns></returns>
+        public static float NormalRandom(float mean, float standardDeviation)
+        {
+            float u1 = UnityEngine.Random.value;
+            float u2 = UnityEngine.Random.value;
+
+            float z0 = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
+            float randomValue = mean + standardDeviation * z0;
+
+            return randomValue;
+        }
+
+        /// <summary>
+        /// 正規分布に基づいてランダムな値を生成する関数
+        /// </summary>
+        /// <param name="mean"></param>
+        /// <param name="percent"></param>
+        /// <returns></returns>
+        public static float NormalRandom5Percent(float mean, float percent)
+        {
+            var standardDeviation = (float)(mean * percent / 1.96);
+            float u1 = UnityEngine.Random.value;
+            float u2 = UnityEngine.Random.value;
+
+            float z0 = Mathf.Sqrt(-2f * Mathf.Log(u1)) * Mathf.Cos(2f * Mathf.PI * u2);
+            float randomValue = mean + standardDeviation * z0;
+
+            return randomValue;
+        }
+
+        /// <summary>
+        /// 正規化する関数
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static List<float> Normalization(this List<float> list)
+        {
+            var sum = list.Sum(x => x);
+            var list2 = new List<float>(list);
+            list2.ForEach(x => x /= sum);
+            return list2;
+        }
+
+        /// <summary>
+        /// 正規化した値の確率でそのindexを返す関数
+        /// </summary>
+        /// <param name="percents"></param>
+        /// <returns></returns>
+        public static int SelectRandomNumbers(List<float> percents)
+        {
+            var normaled = percents.Normalization();
+            var random = Random.value;
+            float pre = 0;
+            int num = 0;
+            foreach( var x in normaled)
+            {
+                if(random < x + pre)
+                {
+                    return num;
+                }
+                num++;
+                pre += x;
+            }
+            return num;
+        }
+
+        /// <summary>
         /// 値がMax,Minの範囲の中にあるかを確認する
         /// </summary>
         /// <param name="number"></param>
@@ -246,16 +317,13 @@ namespace Shin_UnityLibrary
         public static Vector3 GetCameraRight()
         {
             var angle = Camera.main.transform.eulerAngles;
-            angle.x = 0;
+            angle.z = 0;
             var q = Quaternion.Euler(angle);
             return q * Vector3.right;
         }
         public static Vector3 GetCameraUp()
         {
-            var angle = Camera.main.transform.eulerAngles;
-            angle.x = 0;
-            var q = Quaternion.Euler(angle);
-            return q * Vector3.up;
+            return Vector3.up;
         }
 
         /// <summary>
@@ -545,7 +613,7 @@ namespace Shin_UnityLibrary
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> typeList = new List<Type>();
-
+            if(isEqual) typeList.Add(baseType);
             foreach (Assembly assembly in assemblies)
             {
                 Type[] types = assembly.GetTypes();
@@ -555,13 +623,6 @@ namespace Shin_UnityLibrary
                     if (type.IsSubclassOf(baseType))
                     {
                         typeList.Add(type);
-                    }
-                    if (isEqual)
-                    {
-                        if (baseType == type)
-                        {
-                            typeList.Add(type);
-                        }
                     }
                 }
             }
@@ -574,20 +635,24 @@ namespace Shin_UnityLibrary
         /// <param name="typeName"></param>
         /// <param name="assemblys"></param>
         /// <returns></returns>
-        public static Type GetTypeFromString(string typeName, List<string> assemblys = default)
+        public static Type GetTypeFromString(string typeName, List<string> assemblys = null)
         {
-            List<string> m_assemblys = new List<string>();
+            List<Assembly> m_assemblys = new List<Assembly>();
 
             if (assemblys == null || assemblys.Count == 0)
             {
-                m_assemblys.Add("Assembly-CSharp");
-                m_assemblys.Add("Shin_UnityLibrary_Core");
+                m_assemblys = AppDomain.CurrentDomain.GetAssemblies().ToList();
             }
-            else { m_assemblys = assemblys; }
+            else {
+                foreach(var a in assemblys)
+                {
+                    m_assemblys.Add(Assembly.Load(a));
+                }
+            }
 
-            foreach (string assembly in m_assemblys)
+            foreach (var assembly in m_assemblys)
             {
-                Type type = Assembly.Load(assembly).GetType(typeName);
+                Type type = assembly.GetType(typeName);
                 if (type != null) { return type; }
             }
 
@@ -714,6 +779,51 @@ namespace Shin_UnityLibrary
                 deserializedDict.Add(serializablePair.key, serializablePair.value);
             }
             return deserializedDict;
+        }
+
+        public static async UniTask SimpleTimer(Action action, float time, bool loop = true, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if(loop)
+            {
+                while (loop)
+                {
+                    await Utils.Delay(time);
+                    action.Invoke();
+                }
+            }
+            else
+            {
+                await Utils.Delay(time);
+                action.Invoke();
+            }
+        }
+
+        public static Vector3 GetDownPos(Vector3 vec, string[] layers, float length = 200)
+        {
+            return GetDownPos(new Vector2(vec.x, vec.z), layers, vec.y, length);
+        }
+        public static Vector3 GetDownPos(Vector2 vec, string[] layers, float startY = 100, float length = 200)
+        {
+            int layer = LayerMask.GetMask(layers);
+            Physics.Raycast(new Vector3(vec.x, startY, vec.y), Vector3.down, out RaycastHit hit, length, layer);
+            var pos = new Vector3(vec.x, startY - hit.distance, vec.y);
+            return pos;
+        }
+
+        public static List<S> CastList<T,S>(this List<T> lists, Func<T,S> func)
+        {
+            var newList = new List<S>();
+            foreach (var list in lists)
+            {
+                newList.Add(func(list));
+            }
+            return newList;
+        }
+
+        public static Vector3 GetRandomVector3(float min = 0, float max = 1)
+        {
+            return Vector3.Normalize(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max)));
         }
     }
 }

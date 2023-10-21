@@ -17,7 +17,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     public GetColliderEvent getColliderEvent = null;
 
     private bool dummy = false;
-    [HideInInspector] public CollisionData<T> nowHit = null;
+    [HideInInspector] public CollisionData<T> nowHit;
     [HideInInspector] public bool nowHitFrame = false;
     [HideInInspector] public HitType nowHitType;
     [HideInInspector] public Rigidbody _rigidbody;

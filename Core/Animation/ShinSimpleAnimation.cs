@@ -64,8 +64,8 @@ public class ShinSimpleAnimation : MonoBehaviour
     }
     IEnumerator CrossFadeAnim(AnimationClip clip, float fadeTime, float speed)
     {
-        Debug.Log(clip.name);
-        if (!graph.IsValid()) yield break; 
+        //Debug.Log(clip.name);
+        if (!graph.IsValid()) yield break;
         // ClipPlayableを上書きは出来ない為、一旦mixerの1番と2番を一旦アンロード
         graph.Disconnect(mixer, 0);
         graph.Disconnect(mixer, 1);

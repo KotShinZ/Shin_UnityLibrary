@@ -107,12 +107,15 @@ public class SelectFieldsStatic
         return null;
     }
 
-    public static List<string> MakeStringsFromFields(List<FieldInfo> fields)
+    public static List<string> MakeStringsFromFields(List<FieldInfo> fields, Predicate<FieldInfo> isAddField = null, bool isAddTypeText = true)
     {
         var list = new List<string>();
         foreach (FieldInfo field in fields)
         {
-            list.Add(field.Name);
+            if (isAddField != null && isAddField(field) == false) continue; 
+            string text = field.Name;
+            if (isAddTypeText) text += " (" + field.FieldType.Name + ")";
+            list.Add(text);
         }
         return list;
     }
@@ -234,9 +237,15 @@ public class SetField : GetField
     }
 }
 
+
+
 public class SelectFieldsAttribute : PropertyAttribute
 {
-
+    public Predicate<FieldInfo> isAddList;
+    public SelectFieldsAttribute()
+    {
+        this.isAddList = c => true;
+    }
 }
 
 #if UNITY_EDITOR
@@ -256,53 +265,68 @@ public class SelectFieldsDrawer : PropertyDrawer
     List<FieldInfo> fieldslist;
     List<string> list;
     int preClassSelect = -1;
+    string preBaseType = null;
+
+    int fieldSelect;
 
     public override void OnGUI(Rect position, SerializedProperty prop, GUIContent label)
     {
+        #region FindProperty
         var baseTypeNameProp = prop.FindPropertyRelative("baseTypeName"); //�I������Ă���t�B�[���h�̃^�C�v�̖��O
         var typeNameProp = prop.FindPropertyRelative("typeName"); //�I������Ă���t�B�[���h�̃^�C�v�̖��O
         var fieldNameProp = prop.FindPropertyRelative("m_fieldName"); //�I������Ă���t�B�[���h�̖��O
         var valueProp = prop.FindPropertyRelative("fieldValue"); //�Z�b�g����l
         var selectFieldProp = prop.FindPropertyRelative("selectedField"); //�Z�b�g����l
-        var selectClassProp = prop.FindPropertyRelative("selectedClass"); //�Z�b�g����l
+        var selectClassProp = prop.FindPropertyRelative("selectedClass"); //�Z�b�g����l 
+        #endregion
 
-        if(inited == false)
+        if (baseTypeNameProp.stringValue == "") return;
+
+        #region Init
+
+        if(preBaseType != baseTypeNameProp.stringValue) inited = false;
+
+        if (inited == false)
         {
             baseType = Utils.GetTypeFromString(baseTypeNameProp.stringValue);
+            if(baseType == null) return;
             classList = Utils.GetInheriedType(baseType, true);
             classListString = SelectFieldsStatic.MakeStringsFromTypes(classList);
             inited = true;
-        }
+        } 
+        #endregion
 
         EditorGUI.BeginProperty(position, label, prop);
         EditorGUILayout.BeginVertical(GUI.skin.box);
 
         EditorGUILayout.LabelField("Fields  " + baseTypeNameProp.stringValue);
         
-        if (classList != null && classList.Count != 0) 
+        if (classList != null && classList.Count != 0)  //クラスを選択
         {
-            selectClassProp.intValue = EditorGUILayout.Popup("�N���X��I��", selectClassProp.intValue, classListString.ToArray()); //�N���X��I��
+            selectClassProp.intValue = EditorGUILayout.Popup("SelectClass", selectClassProp.intValue, classListString.ToArray());
             typeNameProp.stringValue = classListString[selectClassProp.intValue];
         }
 
-        if(selectClassProp.intValue != preClassSelect || list.Count <= selectFieldProp.intValue)
+        if(preBaseType != baseTypeNameProp.stringValue || selectClassProp.intValue != preClassSelect || list.Count <= selectFieldProp.intValue) //フィールドリストを更新
         {
-            fieldslist = SelectFieldsStatic.GetFieldsInheritedFrom(classList[selectClassProp.intValue]);//�t�B�[���h���X�g���擾
-            list = SelectFieldsStatic.MakeStringsFromFields(fieldslist); //�t�B�[���h�����񃊃X�g���擾
+            fieldslist = SelectFieldsStatic.GetFieldsInheritedFrom(classList[selectClassProp.intValue]);
+            list = SelectFieldsStatic.MakeStringsFromFields(fieldslist , fields.isAddList);
         }
 
-        if (list != null && list.Count != 0)
+        if (list != null && list.Count != 0) //フィールドを選択
         {
-            selectFieldProp.intValue = EditorGUILayout.Popup("�t�B�[���h��I��", selectFieldProp.intValue, list.ToArray()); //�t�B�[���h��I��
+            fieldSelect = EditorGUILayout.Popup("SelectField", fieldSelect, list.ToArray());
+            selectFieldProp.intValue = fieldSelect;
             fieldNameProp.stringValue = list[selectFieldProp.intValue];
         }
 
-        if (valueProp != null) //SetValue�Ȃ�
+        if (valueProp != null) //SetValueの場合、Setする値を代入
         {
             var selectedFieldType = fieldslist[selectFieldProp.intValue].FieldType; //�^�C�v���擾
             ObjectValueField.MultiObjectField(valueProp, selectedFieldType, valueProp.name); //�t�B�[���h�ɓ����l����
         }
 
+        preBaseType = baseTypeNameProp.stringValue;
         preClassSelect = selectClassProp.intValue;
 
         EditorGUILayout.EndHorizontal();

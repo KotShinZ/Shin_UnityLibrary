@@ -8,7 +8,7 @@ using UnityEngine;
 public class CollisionListMasked<T> : CollisionList<T> where T : Component
 {
     [Space(19), Header("Masks")]
-    [EnumFlags]public Direction direction;
+    [EnumFlags]public Direction direction = (Direction)63;
     [Label("向きの基準となるオブジェクト(Nullだとワールド座標系となる)")] public Transform gravityObject;
 
     [Space(10)]
@@ -18,12 +18,14 @@ public class CollisionListMasked<T> : CollisionList<T> where T : Component
     public bool isTag = false;
     [Tag] public List<string> tags = new List<string>();
 
-    bool Layer(CollisionData<T> col)
+    bool Layer(GameObject col)
     {
-        return col.component.gameObject.LayerCheck(layerMask);
+        //Debug.Log(col.LayerCheck(layerMask));
+        return col.LayerCheck(layerMask);
     }
 
     bool Direction(CollisionData<T> col) {
+       // Debug.Log(col.isDirection(direction));
         if(gravityObject == null)
         {
             return col.isDirection(direction);
@@ -34,20 +36,24 @@ public class CollisionListMasked<T> : CollisionList<T> where T : Component
         }
     }
 
-    bool Tag(CollisionData<T> col)
+    bool Tag(GameObject col)
     {
-        if (isTag) return Utils.CompereTag(col.component.gameObject, tags);
+        //Debug.Log(col.gameObject.name);
+        //Debug.Log(col.gameObject.tag);
+        if (isTag) return Utils.CompereTag(col.gameObject, tags);
         else return true;
+    }
+
+    public override bool isAddListObject(GameObject col)
+    {
+        if (!Tag(col)) return false;
+        if (!Layer(col)) return false;
+        return base.isAddListObject(col);  
     }
 
     public override bool isAddList(CollisionData<T> col)
     {
-        if (!Tag(col)) return false;
-
         if (!Direction(col)) return false;
-
-        if(!Layer(col)) return false;
-
-        return base.isAddList(col);  
+        return base.isAddList(col);
     }
 }

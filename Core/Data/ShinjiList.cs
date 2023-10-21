@@ -75,6 +75,22 @@ public static class ListExtension
 
         return list1.SequenceEqual(list2);
     }
+
+    public static bool Find<T>(this List<T> values, Predicate<T> predicate, out T find)
+    {
+        var value = values.Find(predicate);
+        find = value;
+        return value != null;
+    }
+    public static bool Find<T>(this List<T> values ,T obj, out T find)
+    {
+        return Find(values, t => t.Equals(obj), out find);
+    }
+    public static T Find<T>(this List<T> values, T obj)
+    {
+        Find(values, t => t.Equals(obj), out T find);
+        return find;
+    }
 }
 
 /// <summary>
