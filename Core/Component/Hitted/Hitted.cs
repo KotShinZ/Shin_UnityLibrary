@@ -131,6 +131,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     public bool isHitNoOveride(CollisionData<T> col)
     {
         if(_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
+        if (_rigidbody == null) return true;
         if(speedRange.IsInRange(_rigidbody.velocity.magnitude) || (speedRange.max == 50 && _rigidbody.velocity.magnitude > 50))
         {
             return true;

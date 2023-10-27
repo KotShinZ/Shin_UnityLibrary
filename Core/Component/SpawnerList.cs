@@ -16,7 +16,11 @@ public class SpawnerList : MonoBehaviour
     public int spawnLimit = 1;
     public float interval = -1;
     public GameObject parent = null;
-    public bool initSpawn = false;
+    
+
+    [FoldOut("AutoSpawn", true)] public bool initSpawn = false;
+    [FoldOut("AutoSpawn")] public bool autoSpawn = false;
+    [FoldOut("AutoSpawn")] public float autoSpawnInterval = 1;
 
     [FoldOut("Delay", true)] public float spawnDelayTime = 0.3f;
     [FoldOut("Delay")] public float destroyDelayTime = -1;
@@ -73,6 +77,15 @@ public class SpawnerList : MonoBehaviour
     private void Update()
     {
         nowtime += Time.deltaTime;
+
+        if(autoSpawn)
+        {
+            if(nowtime > autoSpawnInterval)
+            {
+                Spawn();
+                nowtime = 0;
+            }
+        }
     }
 
     /// <summary>
@@ -84,7 +97,7 @@ public class SpawnerList : MonoBehaviour
     }
     public virtual void SpawnNum(int num)
     {
-        for (int i = 0;i < num;i++)
+        for (int i = 0; i < num; i++)
         {
             Spawn();
         }
