@@ -14,10 +14,14 @@ public class AutoDestroy : MonoBehaviour
     void Update()
     {
         nowTime += Time.deltaTime;
-        if (nowTime > time)
+        if (nowTime > time && time != -1)
         {
-            if(predicates == null) { Destroy(gameObject); return; }
-            if(predicates(this)) Destroy(gameObject);
+            if(predicates == null) { Destroy(); return; }
+            if(predicates(this)) Destroy();
         }
+    }
+    public void Destroy()
+    {
+        Destroy(gameObject);
     }
 }

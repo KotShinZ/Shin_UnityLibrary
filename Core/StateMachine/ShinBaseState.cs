@@ -1,14 +1,18 @@
 using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 
 public abstract class ShinBaseState : MonoBehaviour
 {
     [HideInInspector]public ShinStateMachine thisStateMachine;
     [Label("ステートに入ることが出来るかどうか")]public bool canEnterState = true;
-    [Label("現在のステートの状態でステートに入れるか？")]public bool canEnterNowState = false;
+    [Label("現在のステートの状態でステートに入れるか？"), SerializeField] bool canEnterNowState = false;
     [Readonly] public bool isInState = false;
+
+    public IObserver<Type> stateEnterObserver;
 
     public async UniTask m_OnStateEnter(ShinStateMachine stateMachine) {
         thisStateMachine = stateMachine;
@@ -30,6 +34,7 @@ public abstract class ShinBaseState : MonoBehaviour
     /// <returns></returns>
     public virtual bool CanEnterState(ShinBaseState preState, ShinBaseState nextState) {
         if (preState == null) return true;
+        if (nextState == preState && nextState.canEnterNowState == false) { return false; }
         return canEnterState; 
     }
 

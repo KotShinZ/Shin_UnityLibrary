@@ -114,7 +114,7 @@ namespace Shin_UnityLibrary
         public Vector3Class(Vector3 vector) { this.vector = vector; }
     }
 
-    [Serializable]
+    [System.Serializable]
     public struct CollisionData<T> where T : UnityEngine.Component
     {
         private int ID;

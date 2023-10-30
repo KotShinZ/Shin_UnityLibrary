@@ -6,7 +6,6 @@ using Cysharp.Threading.Tasks;
 using System.Threading;
 using UniRx;
 
-[RequireComponent(typeof(Animator))]
 public class ShinSimpleAnimation : MonoBehaviour
 {
     PlayableGraph graph;
@@ -14,12 +13,14 @@ public class ShinSimpleAnimation : MonoBehaviour
     [HideInInspector] public AnimationClipPlayable prePlayable, currentPlayable;
     AnimationClip preClip;
     IEnumerator preTask;
-    Animator animator;
+
+    public Animator animator;
+    public AnimationClip initAnimation;
 
     void Awake()
     {
         graph = PlayableGraph.Create();
-        animator = GetComponent<Animator>();
+        if(animator == null) animator = GetComponent<Animator>();
     }
 
     void Start()
@@ -35,6 +36,8 @@ public class ShinSimpleAnimation : MonoBehaviour
         var output = AnimationPlayableOutput.Create(graph, "output", animator);
         output.SetSourcePlayable(mixer);
         graph.Play();
+
+        if (initAnimation != null) CrossFade(initAnimation, 0.5f , token: default).Forget();
     }
 
     public void Play(AnimationClip clip)

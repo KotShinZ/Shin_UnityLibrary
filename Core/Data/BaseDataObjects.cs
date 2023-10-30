@@ -9,12 +9,12 @@ using Vector3 = UnityEngine.Vector3;
 using Vector2 = UnityEngine.Vector2;
 
 [System.Serializable]
-public abstract class BaseData<T> : IObservable<T>, IFormattable, IValueable<T>, IObservableStr, IAdditive<T>
+public abstract class BaseData<T> : IOptimizedObservable<T>, IFormattable, IValueable<T>, IObservableStr, IAdditive<T>
 {
-    [SerializeField] ReactiveProperty<T> prop = new();
+    [SerializeField] protected ReactiveProperty<T> prop = new();
     public IObservable<T> observableNum => prop;
 
-    public T value { get => prop.Value; set => prop.Value = value; }
+    public virtual T value { get => prop.Value; set => prop.Value = value; }
 
     public BaseData(T _num)
     {
@@ -34,6 +34,11 @@ public abstract class BaseData<T> : IObservable<T>, IFormattable, IValueable<T>,
         c1.Add(c2);
         return c1;
     }
+    public static BaseData<T> operator +(BaseData<T> c1, T c2)
+    {
+        c1.Add(c2);
+        return c1;
+    }
 
     public IDisposable Subscribe(IObserver<T> observer)
     {
@@ -48,14 +53,25 @@ public abstract class BaseData<T> : IObservable<T>, IFormattable, IValueable<T>,
     {
         return value.ToString();
     }
+
+    public bool IsRequiredSubscribeOnCurrentThread()
+    {
+        return false;
+    }
 }
 
 [System.Serializable]
 public class BaseDataInt : BaseData<int>
 {
-    public BaseDataInt(int _num) : base(_num){}
+    public BaseDataInt(int _num) : base(_num) { }
 
-    public override int Add(int item) { value += item;  return value; }
+    public override int Add(int item) { value += item; return value; }
+
+    public static BaseDataInt operator +(BaseDataInt d1, int d2)
+    {
+        d1.Add(d2);
+        return d1;
+    }
 }
 
 [System.Serializable]
@@ -64,6 +80,12 @@ public class BaseDataFloat : BaseData<float>
     public BaseDataFloat(float _num) : base(_num) { }
 
     public override float Add(float item) { value += item; return value; }
+
+    public static BaseDataFloat operator +(BaseDataFloat d1, float d2)
+    {
+        d1.Add(d2);
+        return d1;
+    }
 }
 
 [System.Serializable]
@@ -82,18 +104,42 @@ public class BaseDataVector2 : BaseData<Vector2>
     public override Vector2 Add(Vector2 item) { value += item; return value; }
 }
 
+[System.Serializable]
 public class BaseDataIntClamp : BaseDataInt
 {
     public int max;
     public int min;
 
+    public override int value
+    {
+        get => base.value; set
+        {
+            var c = Mathf.Clamp(value, min, max);
+            base.value = c;
+        }
+    }
+
     public BaseDataIntClamp(int _num) : base(_num)
     {
+        value = _num;
+    }
+    public BaseDataIntClamp(int _num, int _min, int _max) : base(_num)
+    {
+        min = _min;
+        max = _max;
     }
 
     public override void Set(int n)
     {
         var c = Mathf.Clamp(n, min, max);
         base.Set(c);
+    }
+}
+
+public class BaseDataTime : BaseDataFloat
+{
+    public BaseDataTime(float _num) : base(_num)
+    {
+
     }
 }

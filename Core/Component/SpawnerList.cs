@@ -7,12 +7,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using System.Linq;
 
-public class SpawnerList : MonoBehaviour
+public class SpawnerList : SpawnerBase
 {
     [TitleDescription] public string title = "Spawn()が呼ばれるとListに入っているオブジェクトを出現させる\nヒエラルキーにあるならその場所に、Prefabならオブジェクトの中心にスポーンされる";
 
     public List<GameObject> spawnList;
-    List<bool> isPrehub = new();
+    [HideInInspector]public List<bool> isPrehub = new();
     public int spawnLimit = 1;
     public float interval = -1;
     public GameObject parent = null;
@@ -29,7 +29,7 @@ public class SpawnerList : MonoBehaviour
     [FoldOut("Offset")] public Vector3 rotationOffset = Vector3.zero;
     [FoldOut("Offset")] public Vector3 scaleOffset = Vector3.one;
 
-    [FoldOut("Effect", true)] public bool isEffect = true;
+    [FoldOut("Effect", true)] public bool isEffect = false;
     [FoldOut("Effect")] public GameObject effect;
     [FoldOut("Effect")] public Vector3 effectPositionOffset = Vector3.zero;
     [FoldOut("Effect")] public Vector3 effectRotationOffset = Vector3.zero;
@@ -48,25 +48,25 @@ public class SpawnerList : MonoBehaviour
 
     public virtual void Start()
     {
-        spawnList.ForEach(g => {g.SetActive(false); });
-        SetPrehubs();
+        //spawnList.ForEach(g => {g.SetActive(false); });
         if(initSpawn) Spawn();
     }
 
-    void SetPrehubs()
+    public void OnValidate()
     {
 #if UNITY_EDITOR
-        if(spawnList != null && spawnList.Count > 0)
-        for (int i = 0; i < spawnList.Count; i++)
-        {
-            var type = PrefabUtility.GetPrefabType(spawnList[i]);
-            isPrehub.Add(type == PrefabType.Prefab ||
-             type == PrefabType.ModelPrefab ||
-             type == PrefabType.PrefabInstance ||
-             type == PrefabType.ModelPrefabInstance ||
-             type == PrefabType.PrefabInstance);
-         ;
-        }
+        isPrehub = new();
+        if (spawnList != null && spawnList.Count > 0)
+            for (int i = 0; i < spawnList.Count; i++)
+            {
+                var type = PrefabUtility.GetPrefabType(spawnList[i]);
+                isPrehub.Add(type == PrefabType.Prefab ||
+                 type == PrefabType.ModelPrefab ||
+                 type == PrefabType.PrefabInstance ||
+                 type == PrefabType.ModelPrefabInstance ||
+                 type == PrefabType.PrefabInstance);
+                ;
+            }
 #endif
     }
 
@@ -81,6 +81,7 @@ public class SpawnerList : MonoBehaviour
     public virtual void Spawn()
     {
         SpawnObj();
+       
     }
     public virtual void SpawnNum(int num)
     {
@@ -123,40 +124,35 @@ public class SpawnerList : MonoBehaviour
     /// <returns></returns>
     public virtual async UniTask SpawnTask()
     {
-        OnSpawnCalled.Invoke();
-        await UniTask.Delay((int)(spawnDelayTime * 1000));
+        OnSpawnCalled?.Invoke();
+        if(spawnDelayTime > 0) await UniTask.Delay((int)(spawnDelayTime * 1000));
 
         int n = 0;
-        try
+        if (gameObject != null)
         {
-            if (gameObject != null)
-            {
-                nowtime = 0;
-                spawnCount++;
-                var inses = SpawnObjects(spawnList, n);
-                if (isEffect) EffectSpawn(GetCenterPostion(inses));
-                n++;
-            }
+            nowtime = 0;
+            spawnCount++;
+            var inses = SpawnObjects(spawnList, n);
+
+            if (isEffect) EffectSpawn(GetCenterPostion(inses));
+            n++;
         }
-        catch(System.Exception e)
-        { 
-        }
-        
-        
 
         List<GameObject> SpawnObjects(List<GameObject> objs, int n)
         {
+            List<GameObject> list = new List<GameObject>();
             spawnList.ForEach(obj =>
             {
                 if (obj != null)
                 {
                     var ins = SpawnObject(obj, n);
                     spawnedList.Add(ins);
-                    spawned.Invoke();
+                    list.Add(ins);
+                    spawned?.Invoke();
                     if (destroyDelayTime != -1) Utils.DelayDestroy(ins, destroyDelayTime);
                 }
             });
-            return spawnedList;
+            return list ;
         }
 
         GameObject SpawnObject(GameObject obj, int n)
@@ -187,10 +183,8 @@ public class SpawnerList : MonoBehaviour
         /// <param name="objs"></param>
         GameObject SpawnPrehub(GameObject obj)
         {
-            if(obj == null || gameObject == null || gameObject.transform == null) return null;
-
-            var ins = Instantiate(obj, gameObject.transform.position, gameObject.transform.rotation);
-
+            if (obj == null || gameObject == null || gameObject.transform == null) return null;
+            var ins = base.Spawn(obj, gameObject.transform.position, gameObject.transform.rotation);
             ins.transform.position += positionOffset;
             ins.transform.eulerAngles += rotationOffset;
             ins.transform.localScale = Vector3.Scale(ins.transform.localScale, scaleOffset);
@@ -219,7 +213,8 @@ public class SpawnerList : MonoBehaviour
     public GameObject EffectSpawn(Vector3 position)
     {
         GameObject eff = effect == null ? Resources.Load("DefoltSpawnEffect") as GameObject : effect;
-        GameObject ins = Instantiate(eff, effectPositionOffset + position, Quaternion.Euler(effectRotationOffset));
+        GameObject ins = null;
+       if(eff != null) ins = Instantiate(eff, effectPositionOffset + position, Quaternion.Euler(effectRotationOffset));
         return ins;
     }
 

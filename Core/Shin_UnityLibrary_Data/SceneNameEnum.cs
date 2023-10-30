@@ -10,4 +10,6 @@ None,
 	Retry,
 	NowLoading,
 	GameOver,
+	Result,
+	HowToPlay,
 }

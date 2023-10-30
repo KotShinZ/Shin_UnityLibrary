@@ -11,6 +11,9 @@ using System.Reflection;
 using UnityEngine.EventSystems;
 using Component = UnityEngine.Component;
 using System.Data;
+using DG.Tweening;
+using UniRx;
+using UniRx.Triggers;
 
 namespace Shin_UnityLibrary
 {
@@ -120,7 +123,10 @@ namespace Shin_UnityLibrary
         {
             var sum = list.Sum(x => x);
             var list2 = new List<float>(list);
-            list2.ForEach(x => x /= sum);
+            for( int i = 0; i < list2.Count; i++)
+            {
+                list2[i] = list2[i] / sum;
+            }
             return list2;
         }
 
@@ -669,14 +675,19 @@ namespace Shin_UnityLibrary
         {
             var str = JsonUtility.ToJson(obj);
 
+            string filePass = "";
+#if UNITY_EDITOR
+            filePass = Application.dataPath + "/" + pass;
+#else
+            filePass = Application.persistentDataPath + "/" + pass;
+#endif
             //ファイルがないなら作る
-            if (!System.IO.Directory.Exists(Application.dataPath + "/" + pass))
+            if (!System.IO.Directory.Exists(filePass))
             {
-                System.IO.Directory.CreateDirectory(Application.dataPath + "/" + pass);
+                System.IO.Directory.CreateDirectory(filePass);
             }
-
             // ファイルに保存
-            var writer = new StreamWriter(Application.dataPath + "/" + pass + "/" + name + ".json", false);
+            var writer = new StreamWriter(filePass + "/" + name + ".json", false);
             writer.Write(str);
             writer.Flush();
             writer.Close();
@@ -695,7 +706,13 @@ namespace Shin_UnityLibrary
             {
                 string datastr = "";
                 StreamReader reader;
-                reader = new StreamReader(Application.dataPath + "/" + pass + "/" + name + ".json");
+                var filePass = "";
+#if UNITY_EDITOR
+                filePass = Application.dataPath + "/" + pass;
+#else
+            filePass = Application.persistentDataPath + "/" + pass;
+#endif
+                reader = new StreamReader(filePass + "/" + name + ".json");
                 datastr = reader.ReadToEnd();
                 reader.Close();
 
@@ -788,6 +805,7 @@ namespace Shin_UnityLibrary
             {
                 while (loop)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     await Utils.Delay(time);
                     action.Invoke();
                 }
@@ -825,7 +843,31 @@ namespace Shin_UnityLibrary
         {
             return Vector3.Normalize(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max)));
         }
+
+        public static async UniTask StopSlow(this AudioSource source, float duration = 1)
+        {
+            if(source.isPlaying)
+            {
+                var preVolume = source.volume;
+                if (duration > 0)
+                {
+                    var t = DOVirtual.Float(preVolume, 0, duration, f => source.volume = f);
+                    await Delay(duration);
+                    t.Kill();
+                }
+
+                source.Stop();
+                source.volume = preVolume;
+            }
+        }
+
+        public static void Play(this AudioSource source, AudioClip clip)
+        {
+            source.clip = clip;
+            source.Play();
+        }
     }
+    
 }
 
 [System.Serializable]

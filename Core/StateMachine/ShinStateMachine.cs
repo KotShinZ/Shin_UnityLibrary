@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using System;
 using System.Linq;
+using UniRx;
 
 /// <summary>
 /// シンプルなステートマシン(ステートの設定が出来る)
@@ -14,16 +15,28 @@ public class ShinStateMachine : MonoBehaviour
 {
     [SerializeField] protected List<ShinBaseState> states;
 
-    [Readonly, SerializeField]protected ShinBaseState nowState;
+    [Readonly, SerializeField] protected ShinBaseState nowState;
 
-    private bool stateEnteredThisFrame = false;
     private bool isStateSetting = false; //ステートの遷移中かどうか
 
     public bool canEnterState = true;
 
+    Queue<ShinBaseState> preEnterStates = new Queue<ShinBaseState>();
+
     private void Awake()
     {
-        SetDefaultState().Forget();
+        SetDefaultState(true).Forget();
+        SetStateEnterObserver();
+    }
+
+    public void SetStateEnterObserver()
+    {
+        states.ForEach(s =>
+        {
+            var subject = new Subject<Type>();
+            subject.Subscribe(type => SetState(type).Forget()).AddTo(s);
+            s.stateEnterObserver = subject;
+        });
     }
 
     /// <summary>
@@ -33,9 +46,9 @@ public class ShinStateMachine : MonoBehaviour
     /// <returns></returns>
     public async UniTask SetState(ShinBaseState _state)
     {
-        if(CanSetState(nowState , _state))
+        if (CanSetState(nowState, _state))
         {
-            SetStateForce(_state).Forget();
+            preEnterStates.Enqueue(_state);
         }
     }
     public async UniTask SetState<T>() where T : ShinBaseState
@@ -81,14 +94,8 @@ public class ShinStateMachine : MonoBehaviour
     /// <param name="nextState"></param>
     public virtual bool CanSetState(ShinBaseState preState, ShinBaseState nextState)
     {
-        //await UniTask.WaitUntil(() => stateEnteredThisFrame == false);
-
-        if (stateEnteredThisFrame == true) { return false; }//ステートの移動は1フレーム一回のみ
-        stateEnteredThisFrame = true;
-
         if (!canEnterState) return false; //ステートに入れない状態である
 
-        if(nextState == preState && nextState.canEnterNowState == false) { return false; }
         if (nextState.CanEnterState(preState, nextState))
         {
             return true;
@@ -112,8 +119,11 @@ public class ShinStateMachine : MonoBehaviour
     /// <returns></returns>
     public async UniTask SetDefaultState(bool force = true)
     {
-        if(force == true) await SetStateForce(states[0]);
-        else SetState(states[0]);
+        if (nowState != states[0])
+        {
+            if (force == true) await SetStateForce(states[0]);
+            else SetState(states[0]);
+        }
     }
 
     /// <summary>
@@ -121,9 +131,15 @@ public class ShinStateMachine : MonoBehaviour
     /// </summary>
     public virtual void Update()
     {
-        if (nowState != null && !isStateSetting) { nowState.OnStateUpdateNoEnterExit(this);}
-        if(nowState != null) nowState.OnStateUpdate(this);
-        stateEnteredThisFrame = false;
+        if(preEnterStates.Count > 0)
+        {
+            var s = preEnterStates.Dequeue();
+            //Debug.Log(s.gameObject.name);
+            if (s != null) SetStateForce(s).Forget();
+        }
+
+        if (nowState != null && !isStateSetting) { nowState.OnStateUpdateNoEnterExit(this); }
+        if (nowState != null) nowState.OnStateUpdate(this);
         states.ForEach(state => { state.OnUpdate(); });
     }
 
@@ -150,7 +166,7 @@ public class ShinStateMachine : MonoBehaviour
         var machines = FindObjectsOfType<T>();
         foreach (var machine in machines)
         {
-            if (Utils.CompereTag(machine.gameObject, tags)) machine.enabled = active; 
+            if (Utils.CompereTag(machine.gameObject, tags)) machine.enabled = active;
         }
     }
 }

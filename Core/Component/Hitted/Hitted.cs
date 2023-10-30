@@ -10,7 +10,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
 {
     public Action<CollisionData<T>> onEnter;
     public UnityEvent<CollisionData<T>> OnEnter;
-    [FoldOut("hit")] public bool collision = true;
+    [FoldOut("hit", true)] public bool collision = true;
     [FoldOut("hit")] public bool trigger = true;
     [MinMaxRange(0,50)]
     public MinMax speedRange = new MinMax(0, 50);

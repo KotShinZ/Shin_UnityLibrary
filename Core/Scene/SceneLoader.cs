@@ -32,7 +32,8 @@ public static class SceneLoader
                 SceneManager.SetActiveScene(SceneManager.GetSceneByName(SceneNameEnum.Game.ToString()));
             }
         }*/
-        if (s.name != null && IsLoaded(s.ToString()) == true)
+
+        if (s != null && s.name != null )
         {
             SceneManager.SetActiveScene(s);
         }
@@ -69,6 +70,7 @@ public static class SceneLoader
     public static AsyncOperation UnloadOperation(SceneNameEnum scenes)
     {
         Resources.UnloadUnusedAssets();
+        Debug.Log(scenes.ToString());
         return SceneManager.UnloadSceneAsync(scenes.ToString());
     }
     public static async UniTask Unload(SceneNameEnum scenes, float t = 0)
@@ -94,7 +96,10 @@ public static class SceneLoader
 
         await action();
 
-        if(loadingScene != SceneNameEnum.None) await Unload(loadingScene);
+        if (loadingScene != SceneNameEnum.None)
+        {
+            await Unload(loadingScene);
+        }
     }
 
     public static async UniTask Load(SceneNameEnum scenes, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
@@ -148,11 +153,12 @@ public static class SceneLoader
                 if (!onlyScenes.Contains(sc))
                 {
                     //Debug.Log(sc.ToString() + "_______");
-                    await Unload(sc);
+                    if(sc != SceneNameEnum.None) await Unload(sc);
                 }
             }
             await Load(scenes, loadingScene: SceneNameEnum.None, 0, LoadSceneMode.Additive);
         });
+        SetActiveScenes(scenes);
     }
     public static async UniTask OnlyScenes(SceneNameEnum scenes, SceneNameEnum onlyScene, SceneNameEnum loadingScene = SceneNameEnum.None, float t = 0, LoadSceneMode loadSceneMode = LoadSceneMode.Additive)
     {
