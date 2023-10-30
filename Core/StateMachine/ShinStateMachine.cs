@@ -68,7 +68,6 @@ public class ShinStateMachine : MonoBehaviour
     public void SetState(GameObject _state)
     {
         var type = _state.GetComponent<ShinBaseState>().GetType();
-        Debug.Log(type);
         SetState(type);
     }
 

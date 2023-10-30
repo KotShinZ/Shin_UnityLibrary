@@ -8,7 +8,7 @@ using Shin_UnityLibrary;
 
 public abstract class ShinAnimateState : ShinBaseState //ステートにアニメーション切り替えを同期させる
 {
-    [FoldOut("Animation", true)]public AnimationClip preAnimation = null;
+    [FoldOut("Animation", true)] public AnimationClip preAnimation = null;
     [FoldOut("Animation")] public AnimationClip thisAnimation;
     [FoldOut("Animation")] public AnimationClip endAnimation = null;
     [FoldOut("Animation", space = 10)] public float preAnimationSpead = 1f;
@@ -188,7 +188,7 @@ public abstract class ShinAnimateState : ShinBaseState //ステートにアニ�
     /// <returns></returns>
     public bool isEnterFromSelectedList(ShinBaseState preState)
     {
-        foreach(var state in selectedAnimations.list)
+        foreach (var state in selectedAnimations.list)
         {
             //Debug.Log(preState.GetType().FullName + "==" + state + " , ");
             if (preState.GetType() == state)
@@ -209,7 +209,7 @@ public abstract class ShinAnimateState : ShinBaseState //ステートにアニ�
 
     public virtual void OnEnable()
     {
-        if(selectedAnimations == null) selectedAnimations = new(SetSelectType(), addToObject: this);
+        if (selectedAnimations == null) selectedAnimations = new(SetSelectType(), addToObject: this);
     }
 
     public abstract Type SetSelectType();

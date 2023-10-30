@@ -11,6 +11,7 @@ using System.Reflection;
 using UnityEngine.EventSystems;
 using Component = UnityEngine.Component;
 using System.Data;
+using UnityEngine.InputSystem;
 using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
@@ -844,6 +845,28 @@ namespace Shin_UnityLibrary
             return Vector3.Normalize(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max)));
         }
 
+        /// <summary>
+        /// 待って長押しかどうか判定する
+        /// </summary>
+        /// <param name="end"></param>
+        /// <param name="holdedAction"></param>
+        /// <returns></returns>
+        public static async UniTask<bool> IsHoldedAction(this InputAction action, Action holdedAction = null)
+        {
+            var holded = false;
+            CancellationTokenSource source = new CancellationTokenSource();
+            UniTask.Action(async c => {
+                c.ThrowIfCancellationRequested();
+                await UniTask.WaitUntil(() => action.GetTimeoutCompletionPercentage() >= 1);
+                holded = true;
+                if (holdedAction != null) holdedAction?.Invoke();
+            }, source.Token)();
+
+            await UniTask.WaitUntil(() => action.WasReleasedThisFrame());
+            source.Cancel();
+
+            return holded;
+        }
         public static async UniTask StopSlow(this AudioSource source, float duration = 1)
         {
             if(source.isPlaying)
@@ -866,8 +889,8 @@ namespace Shin_UnityLibrary
             source.clip = clip;
             source.Play();
         }
-    }
     
+    }
 }
 
 [System.Serializable]

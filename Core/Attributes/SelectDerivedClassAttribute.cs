@@ -112,6 +112,18 @@ public class SelectDerivedClassDrawer : PropertyDrawer
         EditorGUI.EndProperty();
         EditorGUILayout.Space(10);
     }
+
+
+    /*public void Init(string typeString, )
+    {
+#if UNITY_EDITOR
+        var type = Utils.GetTypeFromString(typeString); //一応
+        if (allClassList == null) allClassList = GetDerivedClass.instance.LoadDerivedClassListString(type);//クラスの全リストを取得
+#endif
+        if (allTypeList == null) allTypeList = allClassList.CastList(t => Utils.GetTypeFromString(t));
+
+        _list = GetDerivedClass.instance.GetSelectedClassesByN(n, allTypeList); //選択しているクラスを取得
+    }*/
 }
 
 #endif
