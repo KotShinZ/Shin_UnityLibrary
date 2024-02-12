@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
-using NaughtyAttributes;
 using System;
 using UnityEngine.Events;
 using Shin_UnityLibrary;
@@ -14,9 +13,9 @@ public class UIArranger : MonoBehaviour
     public GameObject parent;
     public GameObject prehub;
 
-    [Foldout("Transform"), Vector2Slider(-1.5f, 1.5f)] public Vector2 firstPosition;　//一つ目の位置
-    [Foldout("Transform"), Vector2Slider(0, 1f)] public Vector2 space = new Vector2(0.02f, 0.02f); //間隔
-    [Foldout("Transform")] public float scale = 1; //それぞれの大きさ
+    [FoldOut("Transform", true), Vector2Slider(-1.5f, 1.5f)] public Vector2 firstPosition;　//一つ目の位置
+    [FoldOut("Transform"), Vector2Slider(0, 1f)] public Vector2 space = new Vector2(0.02f, 0.02f); //間隔
+    [FoldOut("Transform")] public float scale = 1; //それぞれの大きさ
 
     public Vector2Int MaxArrangeNum = new Vector2Int(2, 2); //並べる最大数
     public bool instantinateCopy;

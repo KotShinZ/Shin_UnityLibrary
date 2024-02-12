@@ -7,7 +7,8 @@ public class Quit : MonoBehaviour
     // Start is called before the first frame update
     [TitleDescription()]
     public string title = "生成されるとアプリケーションを終了";
-    public bool isStartQuit = true;
+    public bool isStartQuit = false;
+    public bool escQuit = false;
 
     void Start()
     {
@@ -21,6 +22,11 @@ public class Quit : MonoBehaviour
 #else
     Application.Quit();//ゲームプレイ終了
 #endif
+    }
+
+    private void Update()
+    {
+        if(escQuit && Input.GetKeyDown(KeyCode.Escape)) QuitApp();
     }
 
 }

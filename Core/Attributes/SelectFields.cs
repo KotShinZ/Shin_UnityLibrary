@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Shin_UnityLibrary;
+using UniRx;
 
 #if UNITY_EDITOR
 using UnityEditor.Callbacks;
@@ -132,7 +133,7 @@ public class SelectFieldsStatic
 }
 
 [System.Serializable]
-public class GetField
+public class GetField : IObservable<object>
 {
     public GetField(Type baseType)
     {
@@ -148,8 +149,8 @@ public class GetField
 
 
     public string typeName;//�q�N���X�̖��O
-    public Type type { get { if (m_type == null) m_type = SelectFieldsStatic.GetTypeInheritedFromString(baseType, typeName); return m_type; } }
-    private Type m_type; //�q�N���X
+    public Type type { get { if (m_type == null) m_type = Utils.GetTypeFromString(typeName); return m_type; } }
+    protected Type m_type; //�q�N���X
 
     public string fieldName { get { if (m_fieldName == null) { m_fieldName = m_fieldInfo.Name; } return m_fieldName; } }
     public string m_fieldName; //�q�N���X�̎w��̃t�B�[���h�̖��O
@@ -160,28 +161,31 @@ public class GetField
         {
             if (m_fieldInfo == null)
             {
-                if (m_type == null) m_type = SelectFieldsStatic.GetTypeInheritedFromString(baseType, typeName);
-                if (m_type == null)
+                if (m_type == null) m_type = Utils.GetTypeFromString(typeName);
+
+                m_fieldInfo = type.GetField(m_fieldName);
+                if (m_fieldInfo != null) return m_fieldInfo;
+                else
                 {
                     m_fieldInfo = SelectFieldsStatic.GetFieldTypeInherited(baseType, m_fieldName);
                     return m_fieldInfo;
                 }
-                else
-                {
-                    m_fieldInfo = type.GetField(m_fieldName);
-                }
-                return m_fieldInfo;
             }
-            return null;
+            return m_fieldInfo;
         }
     }
     private FieldInfo m_fieldInfo;
 
-    public object GetValue(object targetObject)
+    IObservable<object> observable;
+
+    public virtual object GetValue(object targetObject)
     {
-        /*Debug.Log(targetObject.GetType());
+        /*Debug.Log(selectedField);
+        Debug.Log(targetObject.GetType());
         Debug.Log(fieldInfo);
+        Debug.Log(fieldInfo.Name);
         Debug.Log(fieldInfo.GetValue(targetObject));*/
+
         return fieldInfo.GetValue(targetObject);
     }
     public object GetValueFromList(IEnumerable<object> targetObject)
@@ -189,24 +193,24 @@ public class GetField
         object k = null;
         foreach (object t in targetObject)
         {
-            if (t.GetType() == type)
+            try
             {
                 k = GetValue(t);
                 if (k != null) return k;
             }
-               
+            catch { }
         }
         return null;
     }
 
     public T GetValue<T>(object targetObject) where T : class
     {
-        return fieldInfo.GetValue(targetObject) as T;
+        return GetValue(targetObject) as T;
     }
     public T GetValueFromList<T>(IEnumerable<object> targetObject) where T : class
     {
         object k = null;
-        Debug.Log(fieldInfo.Name);
+        //Debug.Log(fieldInfo.Name);
         foreach (object t in targetObject)
         {
 
@@ -219,6 +223,36 @@ public class GetField
         }
         return null;
     }
+
+    public IDisposable Subscribe(IObserver<object> observer)
+    {
+        if(observable == null)
+        {
+            observable = GetValue(this).ObserveEveryValueChanged(o => o);
+            Debug.Log(observable);
+            /*Type genericType = typeof(ReactiveProperty<>);
+
+            // intをジェネリック型引数として具体的な型を作成
+            reactiveType = genericType.MakeGenericType(fieldInfo.GetType());
+
+            // その型の新しいインスタンスを作成
+            observable = Activator.CreateInstance(reactiveType);*/
+        }
+        observable.Subscribe(observer);
+        /*
+        var subscribeMethod = reactiveType.GetMethod("Subscribe", new[] { fieldInfo.GetType() });
+
+        if(fieldInfo.GetType() == typeof(S))
+        {
+            subscribeMethod.Invoke(observable, new object[] { observer });
+        }
+        else
+        {
+            Debug.LogWarning("Subscribe failed. To Subscribe, you need equal fieldType and inputType");
+        }*/
+
+        return observable as IDisposable;
+    }
 }
 
 [System.Serializable]
@@ -228,7 +262,8 @@ public class SetField : GetField
 
     public SetField(Type baseType) : base(baseType)
     {
-
+        this.baseType = baseType;
+        baseTypeName = baseType.Name;
     }
 
     public void SetValue(object targetObject)
@@ -237,6 +272,22 @@ public class SetField : GetField
     }
 }
 
+[System.Serializable]
+public class GetFieldObject : GetField
+{
+    public Component behaviour;
+
+    public GetFieldObject(Type baseType) : base(baseType)
+    {
+        this.baseType = baseType;
+        baseTypeName = baseType.Name;
+    }
+
+    public override object GetValue(object targetObject)
+    {
+        return base.GetValue(behaviour);
+    }
+}
 
 
 public class SelectFieldsAttribute : PropertyAttribute
@@ -267,7 +318,9 @@ public class SelectFieldsDrawer : PropertyDrawer
     int preClassSelect = -1;
     string preBaseType = null;
 
-    int fieldSelect;
+    public int fieldSelect;
+
+   
 
     public override void OnGUI(Rect position, SerializedProperty prop, GUIContent label)
     {
@@ -278,20 +331,26 @@ public class SelectFieldsDrawer : PropertyDrawer
         var valueProp = prop.FindPropertyRelative("fieldValue"); //�Z�b�g����l
         var selectFieldProp = prop.FindPropertyRelative("selectedField"); //�Z�b�g����l
         var selectClassProp = prop.FindPropertyRelative("selectedClass"); //�Z�b�g����l 
+        var behaviourProp = prop.FindPropertyRelative("behaviour"); //�Z�b�g����l 
         #endregion
 
         if (baseTypeNameProp.stringValue == "") return;
 
         #region Init
 
-        if(preBaseType != baseTypeNameProp.stringValue) inited = false;
+        void Init()
+        {
+            baseType = Utils.GetTypeFromString(baseTypeNameProp.stringValue);
+            if (baseType == null) return;
+            classList = Utils.GetInheriedType(baseType, true);
+            classListString = SelectFieldsStatic.MakeStringsFromTypes(classList);
+        }
+
+        if (preBaseType != baseTypeNameProp.stringValue) inited = false;
 
         if (inited == false)
         {
-            baseType = Utils.GetTypeFromString(baseTypeNameProp.stringValue);
-            if(baseType == null) return;
-            classList = Utils.GetInheriedType(baseType, true);
-            classListString = SelectFieldsStatic.MakeStringsFromTypes(classList);
+            Init();
             inited = true;
         } 
         #endregion
@@ -300,6 +359,16 @@ public class SelectFieldsDrawer : PropertyDrawer
         EditorGUILayout.BeginVertical(GUI.skin.box);
 
         EditorGUILayout.LabelField("Fields  " + baseTypeNameProp.stringValue);
+
+        if(behaviourProp != null)
+        {
+            EditorGUILayout.ObjectField(behaviourProp);
+            if(behaviourProp.objectReferenceValue != null)
+            {
+                baseTypeNameProp.stringValue = behaviourProp.objectReferenceValue.GetType().Name;
+                Init();
+            }
+        }
         
         if (classList != null && classList.Count != 0)  //クラスを選択
         {
@@ -315,15 +384,17 @@ public class SelectFieldsDrawer : PropertyDrawer
 
         if (list != null && list.Count != 0) //フィールドを選択
         {
+
+            fieldSelect = selectFieldProp.intValue;
             fieldSelect = EditorGUILayout.Popup("SelectField", fieldSelect, list.ToArray());
             selectFieldProp.intValue = fieldSelect;
-            fieldNameProp.stringValue = list[selectFieldProp.intValue];
+            fieldNameProp.stringValue = fieldslist[selectFieldProp.intValue].Name;
         }
 
         if (valueProp != null) //SetValueの場合、Setする値を代入
         {
             var selectedFieldType = fieldslist[selectFieldProp.intValue].FieldType; //�^�C�v���擾
-            ObjectValueField.MultiObjectField(valueProp, selectedFieldType, valueProp.name); //�t�B�[���h�ɓ����l����
+            ObjectValueField.MultiObjectField(valueProp, selectedFieldType, "SetObject"); //�t�B�[���h�ɓ����l����
         }
 
         preBaseType = baseTypeNameProp.stringValue;

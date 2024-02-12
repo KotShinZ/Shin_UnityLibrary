@@ -8,7 +8,7 @@ public class SpawnerBase : MonoBehaviour
 {
     public bool canSpawn = true;
     public IReadOnlyList<GameObject> spawnedList => _spawnedList;
-    public List<GameObject> _spawnedList;
+    [HideInInspector]public List<GameObject> _spawnedList;
 
     public virtual void SpawnedAction(GameObject ins)
     {

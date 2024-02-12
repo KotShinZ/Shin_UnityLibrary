@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using NaughtyAttributes;
 using System;
 using UniRx;
 
@@ -58,7 +57,6 @@ namespace Shin_UnityLibrary
         /// <summary>
         /// 全データを初期化
         /// </summary>
-        [Button("d")]
         public void Delete()
         {
             saveDatas = new();
@@ -116,13 +114,22 @@ namespace Shin_UnityLibrary
 
 
         /// <summary>
+        /// フィールドを取得
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fieldData"></param>
+        public object GetField(GetField fieldData)
+        {
+            return fieldData.GetValueFromList(saveDatas);
+        }
+        /// <summary>
         /// フィールドをT型で取得
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="fieldData"></param>
-        public void GetField<T>(GetField fieldData) where T : class
+        public T GetField<T>(GetField fieldData) where T : class
         {
-            fieldData.GetValueFromList(saveDatas);
+            return fieldData.GetValueFromList(saveDatas) as T;
         }
 
         /// <summary>
@@ -143,7 +150,7 @@ namespace Shin_UnityLibrary
         {
             var data = fieldData.GetValueFromList(saveDatas);
             var f = data as IObservableStr;
-            if (f != null) f.SubscribeToString(observer);
+            f.SubscribeToString(observer);
         }
 
         /*public void SaveGame()

@@ -5,8 +5,6 @@ using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using UniRx;
 using System;
-using UnityEngine.Experimental.GlobalIllumination;
-using NaughtyAttributes;
 using System.Linq;
 
 public class GUISceneLoader : MonoBehaviour

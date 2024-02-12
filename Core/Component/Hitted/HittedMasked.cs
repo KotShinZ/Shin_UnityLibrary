@@ -1,4 +1,4 @@
-using NaughtyAttributes;
+
 using Shin_UnityLibrary;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class HittedMasked<T> : Hitted<T> where T : Component
 {
-    [FoldOut("Masks")][EnumFlags] public Direction direction = (Direction)63;
+    [FoldOut("Masks")]public Direction direction = (Direction)63;
     [FoldOut("Masks", true)]public float directionThreshold= 0.7f; // •ûŒü‚Ì”»’è‚Ì‘å‚«‚³i¬‚³‚¢‚Ù‚Ç”»’è‚ªŠÃ‚¢j
     [FoldOut("Masks")] public IGetGravity gravity;
 

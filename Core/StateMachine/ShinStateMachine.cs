@@ -27,6 +27,7 @@ public class ShinStateMachine : MonoBehaviour
     {
         SetDefaultState(true).Forget();
         SetStateEnterObserver();
+        states.ForEach(s => s.thisStateMachine = this);
     }
 
     public void SetStateEnterObserver()
@@ -84,6 +85,11 @@ public class ShinStateMachine : MonoBehaviour
         await _state.m_OnStateEnter(this);
 
         isStateSetting = false;
+    }
+    public async UniTask SetStateForce<T>() where T : ShinBaseState
+    {
+        var _state = states.Find(s => s is T);
+        await SetState(_state);
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
+using System;
 
 public class UIArrangerObservable : UIArranger
 {
@@ -16,6 +17,17 @@ public class UIArrangerObservable : UIArranger
         base.Start();
 
         var _data = field.GetValueFromList(Shin_UnityLibrary.SaveManager.instance.saveDatas);
+        /*field.Subscribe(o =>
+        {
+            var n = (int)o;
+            Debug.Log(n);
+            Debug.Log(o);
+            OnValueChanged(n);
+            if (n > preValue) OnValueAdded(n - preValue, n, preValue);
+            if (n < preValue) OnValueDecreased(preValue - n, n, preValue);
+            preValue = n;
+        });*/
+
         var data  = _data as BaseDataInt;
         preValue = data.value;
 

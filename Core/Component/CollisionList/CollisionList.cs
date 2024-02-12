@@ -8,7 +8,7 @@ using UnityEngine.Events;
 
 public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Component
 {
-    [SerializeField,Readonly]private List<CollisionData<T>> hitsList = new();
+    [SerializeField,Readonly]protected List<CollisionData<T>> hitsList = new();
     public ReadOnlyCollection<CollisionData<T>> hits => hitsList.AsReadOnly();
 
     [Space(15)]
@@ -170,6 +170,11 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
 
     public virtual void TriggerStay(Collider collider)
     {
+        foreach (var h in hitsList)
+        {
+            if (h.component.gameObject.Equals(collider.gameObject)) { return; } //”í‚è‚Å‚Í‚È‚©‚Á‚½‚ç
+        }
+        AddCollision(collider);
         /*if (isAddListObject(collider.gameObject) == false) return;
         foreach (var h in hitsList)
         {
@@ -195,13 +200,16 @@ public abstract class CollisionList<T> : MonoBehaviour where T : UnityEngine.Com
     {
         if (p != null)
         {
-            var h = hitsList.Find(h => h.component.Equals(p));
+            if(hitsList.Exists(h => h.component.Equals(p)))
+            {
+                var h = hitsList.Find(h => h.component.Equals(p));
 
-            OnExit.Invoke(h);
-            hitsList.Remove(h);
-            //if (gameObject.name == "Player") Debug.Log("Remove");
-            onExit?.Invoke(h);
-            Exit(h);
+                OnExit.Invoke(h);
+                hitsList.Remove(h);
+                //if (gameObject.name == "Player") Debug.Log("Remove");
+                onExit?.Invoke(h);
+                Exit(h);
+            }
         }
     }
 

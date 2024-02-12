@@ -6,7 +6,7 @@ using UnityEngine;
 
 public abstract class HIttedTaged<T> : Hitted<T> where T : Component
 {
-    [Tag, FoldOut("Hit")] public List<string> tags = new List<string>();
+    [Tag] public List<string> tags = new List<string>();
 
     public override bool isHit(CollisionData<T> col)
     {

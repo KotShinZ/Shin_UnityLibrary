@@ -12,6 +12,8 @@ public class DerivedClass : IDisposable
 
     public int n; //‘I‘ð‚Ìint•\Œ»
 
+    public bool byString; //“®‚©‚È‚¢Žž—p
+
     public List<Type> list
     {
         get

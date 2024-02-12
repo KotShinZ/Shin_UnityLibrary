@@ -15,6 +15,8 @@ using UnityEngine.InputSystem;
 using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
+using System.Text.RegularExpressions;
+using UnityEditor;
 
 namespace Shin_UnityLibrary
 {
@@ -284,15 +286,15 @@ namespace Shin_UnityLibrary
             return f;
         }
 
-        public static Vector2Int VectorThreeToTwoInt(Vector3 p)
+        public static Vector2Int VectorThreeToTwoInt(this Vector3 p)
         {
             return new Vector2Int(Mathf.RoundToInt(p.x), Mathf.RoundToInt(p.z));
         }
-        public static Vector2 VectorThreeToTwo(Vector3 p)
+        public static Vector2 VectorThreeToTwo(this Vector3 p)
         {
             return new Vector2(Mathf.Round(p.x), Mathf.Round(p.z));
         }
-        public static Vector3 VectorTwoToThree(Vector2 p)
+        public static Vector3 VectorTwoToThree(this Vector2 p)
         {
             return new Vector3(Mathf.Round(p.x), Mathf.Round(p.y), 0);
         }
@@ -840,9 +842,13 @@ namespace Shin_UnityLibrary
             return newList;
         }
 
+        public static Vector2 GetRandomVector2(float min = 0, float max = 1)
+        {
+            return new Vector2(Random.Range(min, max), Random.Range(min, max));
+        }
         public static Vector3 GetRandomVector3(float min = 0, float max = 1)
         {
-            return Vector3.Normalize(new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max)));
+            return new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
         }
 
         /// <summary>
@@ -889,7 +895,7 @@ namespace Shin_UnityLibrary
             source.clip = clip;
             source.Play();
         }
-    
+
     }
 }
 

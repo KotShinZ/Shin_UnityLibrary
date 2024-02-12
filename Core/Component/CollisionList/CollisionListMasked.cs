@@ -1,4 +1,4 @@
-using NaughtyAttributes;
+
 using Shin_UnityLibrary;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using UnityEngine;
 public class CollisionListMasked<T> : CollisionList<T> where T : Component
 {
     [Space(19), Header("Masks")]
-    [EnumFlags]public Direction direction = (Direction)63;
+    public Direction direction = (Direction)63;
     [Label("向きの基準となるオブジェクト(Nullだとワールド座標系となる)")] public Transform gravityObject;
 
     [Space(10)]

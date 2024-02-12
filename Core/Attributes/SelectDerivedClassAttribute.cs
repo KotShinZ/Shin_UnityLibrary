@@ -8,6 +8,7 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Shin_UnityLibrary;
 using UniRx.Triggers;
+using Google.Protobuf;
 
 #if UNITY_EDITOR
 using UnityEditor.Callbacks;
@@ -61,7 +62,7 @@ public class SelectDerivedClassDrawer : PropertyDrawer
         EditorGUI.BeginProperty(position, label, prop);
         EditorGUILayout.BeginVertical(GUI.skin.box);
 
-        if(derivedClass.tytle  != null) { EditorGUILayout.LabelField(derivedClass.tytle); }
+        if (derivedClass.tytle != null) { EditorGUILayout.LabelField(derivedClass.tytle); }
 
         SerializedProperty nProp = prop.FindPropertyRelative("n");
         SerializedProperty typeProp = prop.FindPropertyRelative("typeString");
@@ -102,10 +103,25 @@ public class SelectDerivedClassDrawer : PropertyDrawer
 
             EditorGUI.EndDisabledGroup();
 
+            if (GUILayout.Button("AddLoadList"))
+            {
+                var type = Utils.GetTypeFromString(typeProp.stringValue); //一応
+                var list = GetDerivedClass.instance.LoadDerivedClassListString(type);//クラスの全リストを取得
+
+                savedListProp.ClearArray();
+
+                for(int i = 0; i < list.Count(); i++)
+                {
+                    // 必要であれば新しい要素を追加
+                    savedListProp.arraySize += 1; // 新しい要素のスペースを追加
+                    SerializedProperty newElement = savedListProp.GetArrayElementAtIndex(i);
+                    newElement.stringValue = list[i];
+                }
+            }
             if (GUILayout.Button("DeleteLoadList")) GetDerivedClass.instance.DeleteLoadLists();
             EditorGUI.indentLevel--;
         }
-        EditorGUI.indentLevel--; 
+        EditorGUI.indentLevel--;
         #endregion
 
         EditorGUILayout.EndVertical();

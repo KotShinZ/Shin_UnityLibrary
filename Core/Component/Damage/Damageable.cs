@@ -40,7 +40,7 @@ public partial class Damageable : MonoBehaviour
 
     System.Action schedule;
 
-    void Start()
+    public virtual void Start()
     {
         ResetDamage();
         m_Collider = GetComponent<Collider>();
@@ -150,6 +150,19 @@ public partial class Damageable : MonoBehaviour
         {
             schedule();
             schedule = null;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        schedule += OnDeath.Invoke;
+
+        var messageType = DamageMessageType.DEAD;
+
+        for (var i = 0; i < onDamageMessageReceivers.Count; ++i)
+        {
+            var receiver = onDamageMessageReceivers[i] as IReceiveDamageMessage;
+            if (receiver != null) receiver.OnReceiveMessage(messageType, this, new DamageMessage(0));
         }
     }
 

@@ -42,9 +42,7 @@ public class UIView : MonoBehaviour
     {
         if(CanSetText())
         {
-            var s = new Subject<string>();
-            s.Subscribe(s => SetText(s));
-            SaveManager.instance.SubscribeField(field, s);
+            SaveManager.instance.SubscribeField(field, Observer.Create<string>(s => SetText(s)));
         }
     }
 }

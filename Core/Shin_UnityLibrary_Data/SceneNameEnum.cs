@@ -4,12 +4,16 @@
 public enum SceneNameEnum
 {
 None,
-	Title,
-	Game,
 	Maneger,
+	Title,
+	StageSelect,
 	Retry,
-	NowLoading,
 	GameOver,
-	Result,
-	HowToPlay,
+	NowLoading,
+	GameClear,
+	Quit,
+	Tutorial,
+	Game_小谷_1,
+	Ipota,
+	Boss,
 }

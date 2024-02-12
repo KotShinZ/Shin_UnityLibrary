@@ -4,22 +4,23 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Cysharp.Threading.Tasks;
-using NaughtyAttributes;
 using UnityEngine.Video;
 
 public class MasterUIManeger : UIManeger<MasterUIManeger>
 {
-    [Foldout("UI")] public GameObject popUpBig;
-    [Foldout("UI")] public Image AllFade;
-    [Foldout("UI")] public RawImage saturate;
+    public GameObject popUpBig;
+    public Image AllFade;
+    public RawImage saturate;
 
     public static RectTransform m_mainCanvas;
-    public static RectTransform mainCanvas { 
+    public static RectTransform mainCanvas
+    {
         get
         {
             if (mainCanvas == null) m_mainCanvas = GameObject.Find("Canvas(–¼‘O‚ğâ‘Î‚É•Ï‚¦‚È‚¢‚Å‚­‚¾‚³‚¢II)").GetComponent<RectTransform>();
             return m_mainCanvas;
-        } }
+        }
+    }
 
     #region General
 

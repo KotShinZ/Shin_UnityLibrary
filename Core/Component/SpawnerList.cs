@@ -12,7 +12,7 @@ public class SpawnerList : SpawnerBase
     [TitleDescription] public string title = "Spawn()が呼ばれるとListに入っているオブジェクトを出現させる\nヒエラルキーにあるならその場所に、Prefabならオブジェクトの中心にスポーンされる";
 
     public List<GameObject> spawnList;
-    [HideInInspector]public List<bool> isPrehub = new();
+    public List<bool> isPrehub = new();
     public int spawnLimit = 1;
     public float interval = -1;
     public GameObject parent = null;
@@ -39,8 +39,6 @@ public class SpawnerList : SpawnerBase
     [FoldOut("Effect")] public Vector3 effectRotationOffset = Vector3.zero;
     [FoldOut("Effect")] public Vector3 effectScaleOffset = Vector3.one;
 
-
-    [HideInInspector] public List<GameObject> spawnedList = new();
     public IReadOnlyList<GameObject> spawnedObjects => spawnList;
 
     [Space(15)]
@@ -52,7 +50,9 @@ public class SpawnerList : SpawnerBase
 
     public virtual void Start()
     {
-        //spawnList.ForEach(g => {g.SetActive(false); });
+        for(int i = 0; i < spawnList.Count; i++) {
+            if (isPrehub[i] == false) spawnList[i].SetActive(false);
+        }
         if(initSpawn) Spawn();
     }
 
@@ -63,6 +63,7 @@ public class SpawnerList : SpawnerBase
         if (spawnList != null && spawnList.Count > 0)
             for (int i = 0; i < spawnList.Count; i++)
             {
+                if (spawnList[i] == null) continue;
                 var type = PrefabUtility.GetPrefabType(spawnList[i]);
                 isPrehub.Add(type == PrefabType.Prefab ||
                  type == PrefabType.ModelPrefab ||
@@ -128,7 +129,7 @@ public class SpawnerList : SpawnerBase
     /// <param name="b"></param>
     public virtual void SetActiveSpawned(bool b = true)
     {
-        spawnedList.ForEach(g => g.SetActive(b));
+        _spawnedList.ForEach(g => g.SetActive(b));
     }
 
     /// <summary>
@@ -159,7 +160,7 @@ public class SpawnerList : SpawnerBase
                 if (obj != null)
                 {
                     var ins = SpawnObject(obj, n);
-                    spawnedList.Add(ins);
+                    _spawnedList.Add(ins);
                     list.Add(ins);
                     spawned?.Invoke();
                     if (destroyDelayTime != -1) Utils.DelayDestroy(ins, destroyDelayTime);

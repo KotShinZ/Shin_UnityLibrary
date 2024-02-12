@@ -33,6 +33,22 @@ public class MoveObject : CollisionList<Rigidbody>
             hit.component.velocity = velocity;
         }*/
     }
+    /*public override void TriggerStay(Collider collider)
+    {
+        base.TriggerStay(collider);
+        bool b = false;
+        for(int i = hits.Count - 1; i >= 0; i--)
+        {
+            if (hits[i].component.gameObject == collider.gameObject)
+            {
+                b = true; break;
+            }
+        }
+        if (!b)
+        {
+            hitsList.Remove();
+        }
+    }*/
 
     public override void Hit(CollisionData<Rigidbody> t)
     {
@@ -42,5 +58,11 @@ public class MoveObject : CollisionList<Rigidbody>
     public override void Exit(CollisionData<Rigidbody> t)
     {
         t.component.transform.parent = preParent;
+    }
+
+    public void Release()
+    {
+        if (hits.Count>0) hits[0].component.transform.parent = preParent;
+
     }
 }
