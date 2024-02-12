@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using ModularMotion;
-using NaughtyAttributes;
 
 [RequireComponent(typeof(UIMotion))]
 public class UIMotionDebuger : MonoBehaviour
@@ -21,21 +20,19 @@ public class UIMotionDebuger : MonoBehaviour
             uIMotion = GetComponent<UIMotion>();
         }
     }
-    [Button("PlayerTillEnd")]
+
     public void PlayTillEnd()
     {
         GetUIMotion();
         gameObject.GetComponent<UIMotion>().PlayFromStartTillEnd();
     }
 
-    [Button("PlayerOne")]
     public void PlayOne()
     {
         GetUIMotion();
         gameObject.GetComponent<UIMotion>().Play();
     }
 
-    [Button("Reset")]
     public void ResetUI()
     {
         GetUIMotion();

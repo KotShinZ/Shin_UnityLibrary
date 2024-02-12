@@ -30,6 +30,13 @@ public class CameraOverideTime : MonoBehaviour
     public Action OnCameraTargetedAction;
     public Action OnCameraEndAction;
 
+    private void OnEnable()
+    {
+        camera = GetComponent<CinemachineVirtualCamera>();
+        camera.enabled = false;
+        camera.Priority = cameraPriority;
+    }
+
     void Start()
     {
         camera = GetComponent<CinemachineVirtualCamera>();

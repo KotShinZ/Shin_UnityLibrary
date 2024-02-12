@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.Splines;
@@ -42,3 +44,5 @@ public abstract class SplineToolBase<DataType> : EditorTool
         DataType inValue,
         out DataType outValue);
 }
+
+#endif

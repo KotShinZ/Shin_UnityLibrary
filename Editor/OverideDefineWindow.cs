@@ -23,7 +23,7 @@ using System.ComponentModel;
 public class OverideDefineWindow : EditorWindow
 {
     public static Dictionary<string, bool> dict = new() {
-        { "CineMachiine", false },
+        { "CineMachine", false },
         { "InputAction", false },
         { "ModularMotion", false },
         { "SelectionGroup", false },
@@ -32,7 +32,7 @@ public class OverideDefineWindow : EditorWindow
         { "VisualCompositor", false },
     };
     static Dictionary<string, bool> defoltDict = new() {
-        { "CineMachiine", false },
+        { "CineMachine", false },
         { "InputAction", false },
         { "ModularMotion", false },
         { "SelectionGroup", false },

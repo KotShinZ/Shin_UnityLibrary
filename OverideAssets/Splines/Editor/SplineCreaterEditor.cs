@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+
+using UnityEditor;
 [CustomEditor(typeof(SplineCreater))]
 [CanEditMultipleObjects]
 class SplineWidthEditor : UnityEditor.Editor
@@ -19,3 +21,4 @@ class SplineWidthEditor : UnityEditor.Editor
         }
     }
 }
+#endif

@@ -1,4 +1,6 @@
-﻿using Unity.Mathematics;
+﻿#if UNITY_EDITOR
+
+using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.EditorTools;
 using UnityEditor.Splines;
@@ -143,3 +145,5 @@ public class WidthTool : SplineToolBase<float>, IDrawSelectedHandles
             Handles.CubeHandleCap(controlID, position, rotation, size, eventType);
     }
 }
+
+#endif
