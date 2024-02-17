@@ -8,7 +8,6 @@ using System.Text.RegularExpressions;
 using System.Linq;
 using Shin_UnityLibrary;
 using UniRx.Triggers;
-using Google.Protobuf;
 
 #if UNITY_EDITOR
 using UnityEditor.Callbacks;

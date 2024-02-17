@@ -11,8 +11,6 @@ using System.Reflection;
 using UnityEngine.EventSystems;
 using Component = UnityEngine.Component;
 using System.Data;
-using UnityEngine.InputSystem;
-using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
 using System.Text.RegularExpressions;
@@ -832,6 +830,14 @@ namespace Shin_UnityLibrary
             return pos;
         }
 
+        /// <summary>
+        /// リストの全ての要素をFuncに指定された方法でCastする
+        /// </summary>
+        /// <typeparam name="T">キャスト前の型</typeparam>
+        /// <typeparam name="S">キャスト後の型</typeparam>
+        /// <param name="lists">キャストするリスト</param>
+        /// <param name="func">どのようにキャストをするか</param>
+        /// <returns></returns>
         public static List<S> CastList<T,S>(this List<T> lists, Func<T,S> func)
         {
             var newList = new List<S>();
@@ -851,51 +857,58 @@ namespace Shin_UnityLibrary
             return new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
         }
 
+       
         /// <summary>
-        /// 待って長押しかどうか判定する
+        /// 音量をゆっくり下げる
         /// </summary>
-        /// <param name="end"></param>
-        /// <param name="holdedAction"></param>
+        /// <param name="source">AudioSourceコンポーネント</param>
+        /// <param name="duration">下げるのにかかる時間</param>
         /// <returns></returns>
-        public static async UniTask<bool> IsHoldedAction(this InputAction action, Action holdedAction = null)
-        {
-            var holded = false;
-            CancellationTokenSource source = new CancellationTokenSource();
-            UniTask.Action(async c => {
-                c.ThrowIfCancellationRequested();
-                await UniTask.WaitUntil(() => action.GetTimeoutCompletionPercentage() >= 1);
-                holded = true;
-                if (holdedAction != null) holdedAction?.Invoke();
-            }, source.Token)();
-
-            await UniTask.WaitUntil(() => action.WasReleasedThisFrame());
-            source.Cancel();
-
-            return holded;
-        }
         public static async UniTask StopSlow(this AudioSource source, float duration = 1)
         {
             if(source.isPlaying)
             {
                 var preVolume = source.volume;
-                if (duration > 0)
-                {
-                    var t = DOVirtual.Float(preVolume, 0, duration, f => source.volume = f);
-                    await Delay(duration);
-                    t.Kill();
-                }
+                await DoFloat(preVolume, 0, duration, v => source.volume = v);
 
                 source.Stop();
                 source.volume = preVolume;
             }
         }
 
+        /// <summary>
+        /// AudioClipを再生する
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="clip"></param>
         public static void Play(this AudioSource source, AudioClip clip)
         {
             source.clip = clip;
             source.Play();
         }
-
+        
+        /// <summary>
+        /// 一定秒数で、値を移動させる
+        /// DoTweenのDoFloatと同じ
+        /// </summary>
+        /// <param name="start">始めの値</param>
+        /// <param name="end">終わりの値</param>
+        /// <param name="duration">かかる時間</param>
+        /// <param name="f">値をどこに代入するか</param>
+        /// <returns></returns>
+        public static async UniTask DoFloat(float start, float end, float duration, Action<float> f)
+        {
+            if (duration > 0)
+            {
+                float t = 0;
+                while (t < duration)
+                {
+                    t += Time.deltaTime;
+                    f.Invoke(Mathf.Lerp(start, end, t / duration));
+                    await UniTask.Yield();
+                }
+            }
+        }
     }
 }
 

@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class RankingManeger : MonoBehaviour, RankingInterface
 {
@@ -14,9 +13,6 @@ public class RankingManeger : MonoBehaviour, RankingInterface
 
     [Space]
     public int canCount = 5;
-
-    [Space]
-    public InputAction AllDeleteAction;
 
     [System.Serializable]
     public class AllRankingData
@@ -31,12 +27,6 @@ public class RankingManeger : MonoBehaviour, RankingInterface
         Load();
         if(alldata == null) alldata = new AllRankingData();
         if(alldata.rankingDatas == null) alldata.rankingDatas = new List<RankingData>();
-        AllDeleteAction.Enable();
-    }
-
-    public void Update()
-    {
-        if (AllDeleteAction.WasPerformedThisFrame()) { AllDelete(); Save(); }
     }
 
     public void Add(RankingData data)
@@ -113,5 +103,10 @@ public class RankingManeger : MonoBehaviour, RankingInterface
             data = alldata.rankingDatas[n];
             return true;
         }
+    }
+
+    public void DataReset()
+    {
+        AllDelete(); Save();
     }
 }

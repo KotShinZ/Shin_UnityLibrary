@@ -1,5 +1,4 @@
 using Shin_UnityLibrary;
-using Sirenix.Utilities;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -54,12 +53,18 @@ public class SpawnerBase : MonoBehaviour
     public static void DeleteAllSpawnerInstance(bool isGenerateStop)
     {
         var spawners = FindObjectsByType<SpawnerBase>(sortMode: FindObjectsSortMode.None);
-        spawners.ForEach(s => s.DeleteAll(isGenerateStop));
+        foreach (var s in spawners)
+        {
+            s.DeleteAll(isGenerateStop);
+        }
     }
     public static void DeleteAllSpawnerInstance<T>(bool isGenerateStop) where T : SpawnerBase
     {
         var spawners = FindObjectsByType<T>(sortMode: FindObjectsSortMode.None);
-        spawners.ForEach(s => s.DeleteAll(isGenerateStop));
+        foreach (var s in spawners)
+        {
+            s.DeleteAll(isGenerateStop);
+        }
     }
 
     #endregion
