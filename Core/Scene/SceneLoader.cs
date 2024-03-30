@@ -84,6 +84,18 @@ public static class SceneLoader
         }
     }
 
+    public static bool IsSceneLoaded(SceneNameEnum scene)
+    {
+        var _scene = SceneManager.GetSceneByName(scene.ToString());
+        return _scene != null && _scene.isLoaded;
+    }
+
+    public static async UniTask WaitSceneLoaded(SceneNameEnum scene)
+    {
+        await UniTask.WaitUntil(() => IsSceneLoaded(scene) == true);
+    }
+
+
     /// <summary>
     /// ローディングをはさむ
     /// </summary>
