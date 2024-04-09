@@ -6,7 +6,6 @@ using UnityEngine.Events;
 using Shin_UnityLibrary;
 
 
-[RequireComponent(typeof(FallDestroy))]
 public class ObjRespawner : MonoBehaviour
 {
     [TitleDescription] public string title = "—‚¿‚½‚è‰ó‚ê‚½‚è‚µ‚Ä‚à\nŒ³‚ÌêŠ‚Å•œŠˆ‚·‚é";

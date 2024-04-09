@@ -438,6 +438,23 @@ namespace Shin_UnityLibrary
             return ((1 << obj.layer) & layerMaskValue) != 0;
         }
 
+        public static void SetLayer(this GameObject obj, LayerMask layerMask)
+        {
+            // LayerMaskから最初に含まれるレイヤーの整数値を計算
+            int layerNumber = 0;
+            int layer = layerMask.value;
+            while (layer > 0)
+            {
+                layer = layer >> 1;
+                if (layer == 0)
+                    break;
+                layerNumber++;
+            }
+
+            // GameObjectのレイヤーを設定
+            obj.layer = layerNumber;
+        }
+
         /// <summary>
         /// ベクトルを回転させる関数
         /// </summary>
