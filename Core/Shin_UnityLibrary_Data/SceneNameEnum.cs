@@ -13,4 +13,5 @@ None,
 	OnlineBattle,
 	LocalBattle,
 	Simple,
+	GrassStage,
 }
