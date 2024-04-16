@@ -71,13 +71,14 @@ public static class SceneLoader
     {
         Resources.UnloadUnusedAssets();
         Debug.Log(scenes.ToString());
-        return SceneManager.UnloadSceneAsync(scenes.ToString());
+        if(IsSceneLoaded(scenes)) return SceneManager.UnloadSceneAsync(scenes.ToString());
+        else return default;
     }
     public static async UniTask Unload(SceneNameEnum scenes, float t = 0)
     {
         var s = SceneManager.GetActiveScene();
         await WaitTime(t);
-        await UnloadOperation(scenes);
+        if (IsSceneLoaded(scenes))  await UnloadOperation(scenes);
         if(s.name != scenes.ToString())
         {
             SetActiveSceneSafe(s);
