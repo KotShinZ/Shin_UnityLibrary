@@ -14,4 +14,5 @@ None,
 	LocalBattle,
 	Simple,
 	GrassStage,
+	StageBase,
 }
