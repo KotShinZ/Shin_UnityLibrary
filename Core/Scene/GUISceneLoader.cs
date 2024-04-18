@@ -132,7 +132,7 @@ public class KeySceneLoad
 
             case LoadSceneType.AdditiveNoActive:
                 await SceneLoader.LoadNoActive(sceneName, 0, LoadSceneMode.Additive);
-                SceneManager.SetActiveScene(activescene);
+                if(SceneLoader.IsLoaded(activescene.name)) SceneManager.SetActiveScene(activescene);
                 break;
         }
     }
