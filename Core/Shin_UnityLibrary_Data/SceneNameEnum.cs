@@ -15,4 +15,5 @@ None,
 	Simple,
 	GrassStage,
 	StageBase,
+	Reticle,
 }
