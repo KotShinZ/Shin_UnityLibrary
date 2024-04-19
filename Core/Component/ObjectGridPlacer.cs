@@ -25,6 +25,16 @@ public class ObjectGridPlacer : MonoBehaviour
         if(updateAtStart)UpdateObjects(true);
     }
 
+    public bool updateAnyway = false;
+
+    void Update()
+    {
+        if (updateAnyway)
+        {
+            UpdateObjectProperties();
+        }
+    }
+
 #if UNITY_EDITOR
     void OnValidate()
     {

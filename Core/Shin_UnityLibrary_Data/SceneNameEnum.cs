@@ -17,4 +17,5 @@ None,
 	StageBase,
 	Reticle,
 	Story,
+	OnePerson,
 }
