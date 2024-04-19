@@ -16,4 +16,5 @@ None,
 	GrassStage,
 	StageBase,
 	Reticle,
+	Story,
 }
