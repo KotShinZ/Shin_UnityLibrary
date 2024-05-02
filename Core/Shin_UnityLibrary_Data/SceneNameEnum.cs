@@ -18,4 +18,6 @@ None,
 	Reticle,
 	Story,
 	OnePerson,
+	TitleAirHockey,
+	AirHockey,
 }
