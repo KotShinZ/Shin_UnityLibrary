@@ -64,7 +64,7 @@ public class ObjectGridPlacer : MonoBehaviour
         UpdateObjects(true);
     }
 
-    void UpdateObjects(bool force = false)
+    public void UpdateObjects(bool force = false)
     {
        
         // 子オブジェクトの数が期待値と異なるか、forceRecreateがtrueの場合、再生成
