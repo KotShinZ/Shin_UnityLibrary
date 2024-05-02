@@ -19,10 +19,12 @@ public class ObjectGridPlacer : MonoBehaviour
     public UnityEvent<GameObject> OnInstantiate;
 
     public bool updateAtStart = true;
+    public bool autoUpdate = false;
 
     void Start()
     {
         if(updateAtStart)UpdateObjects(true);
+        autoUpdate = true;
     }
 
     public bool updateAnyway = false;
@@ -38,6 +40,8 @@ public class ObjectGridPlacer : MonoBehaviour
 #if UNITY_EDITOR
     void OnValidate()
     {
+        if (!autoUpdate) return;
+
         // オブジェクトの数、間隔、回転、スケールが変わったか確認
         bool propertiesChanged = size != lastSize || spacing != lastSpacing || rotation != lastRotation || scale != lastScale;
 
