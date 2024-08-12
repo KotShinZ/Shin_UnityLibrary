@@ -14,7 +14,7 @@ public class ShinItemBase : ShinGetItemsBase, ITypeEqaulObject, ICountableObject
 
     List<IGetItems> IGetItems.itemsProtected => new List<IGetItems> { this };
 
-    [Label("d•¡‰Â”\‚©‚Ç‚¤‚©")] public bool canRepeat = false;
+    [Label("canRepeat")] public bool canRepeat = false;
 
     public ShinItemBase(int n = 1) { _num.value = n; }
     public IDisposable Subscribe(IObserver<int> observer)
@@ -24,7 +24,7 @@ public class ShinItemBase : ShinGetItemsBase, ITypeEqaulObject, ICountableObject
     }
 
     /// <summary>
-    /// item‚ÆKey‚ª“¯‚¶ƒIƒuƒWƒFƒNƒg‚ğTŒ^‚Åæ“¾
+    /// itemï¿½ï¿½Keyï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½Tï¿½^ï¿½Åæ“¾
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="item"></param>
@@ -50,9 +50,9 @@ public class ShinItemBase : ShinGetItemsBase, ITypeEqaulObject, ICountableObject
     public virtual bool Decrease(ICountableObject item) { num -= 1; return true; }
 
     /// <summary>
-    /// ƒAƒCƒeƒ€‚ğ‘‚â‚·
+    /// ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ğ‘‚â‚·
     /// </summary>
-    /// <param name="item">‘‚â‚·‘ÎÛ‚ÌƒAƒCƒeƒ€</param>
+    /// <param name="item">ï¿½ï¿½ï¿½â‚·ï¿½ÎÛ‚ÌƒAï¿½Cï¿½eï¿½ï¿½</param>
     /// <param name="isNewCreate">false</param>
     /// <param name="oneItem">ignore</param>
     /// <returns></returns>
