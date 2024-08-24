@@ -18,6 +18,7 @@ None,
 	Reticle,
 	Story,
 	OnePerson,
-	TitleAirHockey,
 	AirHockey,
+	StageBase_divide,
+	GrassStage_divide,
 }

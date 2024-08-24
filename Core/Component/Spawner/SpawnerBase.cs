@@ -2,12 +2,24 @@ using Shin_UnityLibrary;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
+/// <summary>
+/// ÉXÉ|Å[ÉìÇµÇΩï®ÇÃä«óùÇÇ∑ÇÈ
+/// </summary>
 public class SpawnerBase : MonoBehaviour
 {
+
     public bool canSpawn = true;
     public IReadOnlyList<GameObject> spawnedList => _spawnedList;
-    [HideInInspector]public List<GameObject> _spawnedList;
+    [Readonly]public List<GameObject> _spawnedList;
+
+    public UnityEvent<GameObject> onSpawned = new();
+
+    public virtual void Awake()
+    {
+        _spawnedList = new();
+    }
 
     public virtual void SpawnedAction(GameObject ins)
     {
@@ -19,8 +31,15 @@ public class SpawnerBase : MonoBehaviour
         if (canSpawn)
         {
             var ins = Instantiate(prehub, pos, quaternion);
+
+            ins.transform.parent = this.transform;
+            if(ins.TryGetComponent(out Spawnable spawnable))
+            {
+                spawnable.parent = this;
+            }
             _spawnedList.Add(ins);
             SpawnedAction(ins);
+            onSpawned.Invoke(ins);
             return ins;
         }
         return null;
