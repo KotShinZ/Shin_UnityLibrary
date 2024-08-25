@@ -16,6 +16,8 @@ public class SpawnerBase : MonoBehaviour
 
     public UnityEvent<GameObject> onSpawned = new();
 
+    public SimplePooler pooler;
+
     public virtual void Awake()
     {
         _spawnedList = new();
@@ -30,7 +32,17 @@ public class SpawnerBase : MonoBehaviour
     {
         if (canSpawn)
         {
-            var ins = Instantiate(prehub, pos, quaternion);
+            GameObject ins = null;
+            if(pooler != null)
+            {
+                ins = pooler.GetInstance(prehub); // プールから取得
+                ins.transform.position = pos;
+                ins.transform.rotation = quaternion;
+            }
+            if(ins == null)
+            {
+                ins = Instantiate(prehub, pos, quaternion); // プールから取得できなかったら新規生成
+            }
 
             ins.transform.parent = this.transform;
             if(ins.TryGetComponent(out Spawnable spawnable))
