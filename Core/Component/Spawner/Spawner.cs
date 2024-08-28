@@ -50,7 +50,7 @@ public abstract class Spawner : SpawnerBase
         base.SpawnedAction(ins);
         ins.transform.position += spawnOffset;
         ins.transform.eulerAngles += spawnRotation;
-        ins.transform.localScale = spawnScale;
+        ins.transform.localScale = new Vector3(ins.transform.localScale.x * spawnScale.x, ins.transform.localScale.y * spawnScale.y, ins.transform.localScale.z * spawnScale.z);
     }
 
     public void SpawnOnce()
