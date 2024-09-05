@@ -191,6 +191,8 @@ public class GetDerivedClass : SingletonMonoBehaviour<GetDerivedClass>
 
     public static void GenerateThis()
     {
+        return; //停止
+
         // ヒエラルキー上で特定のコンポーネントを持つかチェック
         if (FindFirstObjectByType<GetDerivedClass>() == false)
         {
