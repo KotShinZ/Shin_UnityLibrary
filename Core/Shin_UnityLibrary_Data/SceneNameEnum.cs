@@ -20,5 +20,5 @@ None,
 	OnePerson,
 	AirHockey,
 	StageBase_divide,
-	GrassStage_divide,
+	GrassStage_bound,
 }
