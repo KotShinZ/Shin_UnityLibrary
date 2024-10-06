@@ -21,4 +21,5 @@ None,
 	AirHockey,
 	StageBase_divide,
 	GrassStage_bound,
+	Stage_Rock,
 }
