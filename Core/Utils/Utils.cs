@@ -526,6 +526,18 @@ namespace Shin_UnityLibrary
             })();
         }
 
+        public static async UniTask LoopActionWithTime(Action action, float time, CancellationToken token = default)
+        {
+            token.ThrowIfCancellationRequested();
+            float elapsedTime = 0;
+            while (elapsedTime < time)
+            {
+                action.Invoke();
+                elapsedTime += Time.deltaTime;
+                await UniTask.Yield();
+            }
+        }
+
         /// <summary>
         /// tagが同じかどうかチェック
         /// </summary>
