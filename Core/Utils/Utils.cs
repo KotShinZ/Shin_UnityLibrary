@@ -67,7 +67,7 @@ namespace Shin_UnityLibrary
         /// </summary>
         /// <param name="percent"></param>
         /// <returns></returns>
-        public static bool Probability(float percent)
+        public static bool Probability(float percent)   
         {
             float p = Mathf.Clamp(percent, 0, 1);
             if (Random.Range(0, (float)1) <= p)
@@ -124,7 +124,7 @@ namespace Shin_UnityLibrary
         {
             var sum = list.Sum(x => x);
             var list2 = new List<float>(list);
-            for( int i = 0; i < list2.Count; i++)
+            for (int i = 0; i < list2.Count; i++)
             {
                 list2[i] = list2[i] / sum;
             }
@@ -142,9 +142,9 @@ namespace Shin_UnityLibrary
             var random = Random.value;
             float pre = 0;
             int num = 0;
-            foreach( var x in normaled)
+            foreach (var x in normaled)
             {
-                if(random < x + pre)
+                if (random < x + pre)
                 {
                     return num;
                 }
@@ -477,6 +477,34 @@ namespace Shin_UnityLibrary
         }
 
         /// <summary>
+        /// 中心を軸に指定したベクトルの角度と同じになるように一定時間をかけて回転させる（角度は変わらず位置だけ変わる）
+        /// </summary>
+        /// <param name="center">中心</param>
+        /// <param name="target">ターゲット</param>
+        /// <param name="direction">方向</param>
+        /// <param name="throwDuration">かかる時間</param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public static async UniTask RotardTowardsWithCenter(GameObject center, GameObject target, Vector2 direction, float throwDuration, CancellationToken token)
+        {
+            var startTheta = Vector3.Angle(target.transform.position - center.transform.position, Vector3.right);
+            var endTheta = Vector3.Angle(direction, Vector3.right);
+            var radius = (target.transform.position - center.transform.position).magnitude; //回転半径
+
+            float time = 0;
+
+            await LoopActionWithTime(() =>
+            {
+                time += Time.deltaTime;
+
+                var theta = Mathf.Lerp(startTheta, endTheta, time / throwDuration);
+                var x = Mathf.Cos(theta * Mathf.Deg2Rad) * radius;
+                var y = Mathf.Sin(theta * Mathf.Deg2Rad) * radius;
+                target.transform.position = new Vector3(x, y, 0) + center.transform.position;
+            }, throwDuration, token);
+        }
+
+        /// <summary>
         /// n秒間待つ
         /// </summary>
         /// <param name="second"></param>
@@ -649,7 +677,7 @@ namespace Shin_UnityLibrary
         {
             Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
             List<Type> typeList = new List<Type>();
-            if(isEqual) typeList.Add(baseType);
+            if (isEqual) typeList.Add(baseType);
             foreach (Assembly assembly in assemblies)
             {
                 Type[] types = assembly.GetTypes();
@@ -679,8 +707,9 @@ namespace Shin_UnityLibrary
             {
                 m_assemblys = AppDomain.CurrentDomain.GetAssemblies().ToList();
             }
-            else {
-                foreach(var a in assemblys)
+            else
+            {
+                foreach (var a in assemblys)
                 {
                     m_assemblys.Add(Assembly.Load(a));
                 }
@@ -831,7 +860,7 @@ namespace Shin_UnityLibrary
         public static async UniTask SimpleTimer(Action action, float time, bool loop = true, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            if(loop)
+            if (loop)
             {
                 while (loop)
                 {
@@ -867,7 +896,7 @@ namespace Shin_UnityLibrary
         /// <param name="lists">キャストするリスト</param>
         /// <param name="func">どのようにキャストをするか</param>
         /// <returns></returns>
-        public static List<S> CastList<T,S>(this List<T> lists, Func<T,S> func)
+        public static List<S> CastList<T, S>(this List<T> lists, Func<T, S> func)
         {
             var newList = new List<S>();
             foreach (var list in lists)
@@ -886,7 +915,7 @@ namespace Shin_UnityLibrary
             return new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
         }
 
-       
+
         /// <summary>
         /// 音量をゆっくり下げる
         /// </summary>
@@ -895,7 +924,7 @@ namespace Shin_UnityLibrary
         /// <returns></returns>
         public static async UniTask StopSlow(this AudioSource source, float duration = 1)
         {
-            if(source.isPlaying)
+            if (source.isPlaying)
             {
                 var preVolume = source.volume;
                 await DoFloat(preVolume, 0, duration, v => source.volume = v);
@@ -915,7 +944,7 @@ namespace Shin_UnityLibrary
             source.clip = clip;
             source.Play();
         }
-        
+
         /// <summary>
         /// 一定秒数で、値を移動させる
         /// DoTweenのDoFloatと同じ
