@@ -5,8 +5,9 @@ using UnityEngine;
 public class Note : MonoBehaviour
 {
 #if UNITY_EDITOR
+
     [SerializeField]
-    [TextArea(1, 50)]
+    [VisualTextArea(1, 6, 20)]
     private string m_note;
 
     public string note { get { return m_note; } set { m_note = value; } }
