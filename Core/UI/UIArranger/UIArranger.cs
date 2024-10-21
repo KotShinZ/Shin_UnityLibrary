@@ -28,6 +28,10 @@ public class UIArranger : MonoBehaviour
 
     private int maxCount => MaxArrangeNum.x * MaxArrangeNum.y;
 
+    public UnityEvent<GameObject> OnInstantiated = new UnityEvent<GameObject>();
+
+    public Action<GameObject, Vector2> instantiatedAction;
+
     public virtual void Start()
     {
         ArrangeGenerate();
@@ -60,6 +64,11 @@ public class UIArranger : MonoBehaviour
     protected int Get2Num(int i, int j)
     {
         return i * MaxArrangeNum.x + j;
+    }
+
+    protected int Get2Num(Vector2 vec)
+    {
+        return (int)(vec.x * MaxArrangeNum.x + vec.y);
     }
 
     /// <summary>
@@ -135,6 +144,8 @@ public class UIArranger : MonoBehaviour
             SetTransform(rect, i, j);
             SetObjectParam(rect, i, j);
             rect.gameObject.SetActive(true);
+            OnInstantiated?.Invoke(rect.gameObject);
+            instantiatedAction?.Invoke(rect.gameObject, new Vector2(i,j));
             return false;
         }, newGenerate: true);
     }

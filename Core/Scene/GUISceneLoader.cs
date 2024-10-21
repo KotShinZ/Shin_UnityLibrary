@@ -92,6 +92,14 @@ public class KeySceneLoad
 
     [HideInInspector] public bool flag;
 
+    public KeySceneLoad(KeyCode key, SceneNameEnum scenes, LoadSceneType type, float delay = 0)
+    {
+        this.key = key;
+        this.scenes = scenes;
+        this.type = type;
+        this.delay = delay;
+    }
+
 
     public async UniTask LoadTypeScene(SceneNameEnum loadingScene = SceneNameEnum.None)
     {
