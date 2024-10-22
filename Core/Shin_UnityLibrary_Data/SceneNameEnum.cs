@@ -22,4 +22,5 @@ None,
 	StageBase_divide,
 	GrassStage_bound,
 	Stage_Rock,
+	StageSelect,
 }
