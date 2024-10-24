@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using UnityEngine;
 
 public class VisualTextAreaAttribute : PropertyAttribute
@@ -16,6 +18,7 @@ public class VisualTextAreaAttribute : PropertyAttribute
         this.textSize = textSize;
     }
 }
+#if UNITY_EDITOR
 [CustomPropertyDrawer(typeof(VisualTextAreaAttribute))]
 public class VisualTextAreaDrawer : PropertyDrawer
 {
@@ -45,3 +48,5 @@ public class VisualTextAreaDrawer : PropertyDrawer
         return EditorGUIUtility.singleLineHeight * (textArea.maxLines + 1);
     }
 }
+
+#endif
