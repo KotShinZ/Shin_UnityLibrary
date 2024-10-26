@@ -72,4 +72,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 #/Font/
-#Core/Shin_UnityLibrary_Data/SceneNameEnum.cs
+Core/Shin_UnityLibrary_Data/SceneNameEnum.cs.meta
+Core/Shin_UnityLibrary_Data/SceneNameEnum.cs
