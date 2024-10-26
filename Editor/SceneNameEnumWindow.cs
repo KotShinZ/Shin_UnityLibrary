@@ -18,7 +18,7 @@ public class SceneNameEnumWindow : EditorWindow
     static void InitCreate()
     {
         SceneNameEnumCreator.PATH = defaultPath;
-        SceneNameEnumCreator.Create();
+        SceneNameEnumCreator.Create(false);
     }
 
     private void OnGUI()

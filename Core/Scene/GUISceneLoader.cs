@@ -18,11 +18,13 @@ public class GUISceneLoader : MonoBehaviour
     public Subject<int> MethodAudio = new();
 
     public SceneNameEnum loadingScene;
+    public SceneNameEnum managerScene;
 
     public void Reset()
     {
         var enums = Enum.GetNames(typeof(SceneNameEnum));
         if (enums.Contains("NowLoading")) loadingScene = (SceneNameEnum)Enum.Parse(typeof(SceneNameEnum), "NowLoading");
+        if (enums.Contains("Manager")) managerScene = (SceneNameEnum)Enum.Parse(typeof(SceneNameEnum), "Manager");
     }
 
     private async void Start()
@@ -31,7 +33,7 @@ public class GUISceneLoader : MonoBehaviour
         {
             var k = StartKeyScene[i];
             LateStartAudio(i);
-            await k.LoadTypeScene(loadingScene);
+            await k.LoadTypeScene(loadingScene, managerScene);
         }
     }
     async void LateStartAudio(int i)
@@ -68,7 +70,7 @@ public class GUISceneLoader : MonoBehaviour
             {
                 if (k.flag)
                 {
-                    await k.LoadTypeScene(loadingScene);
+                    await k.LoadTypeScene(loadingScene, managerScene);
                 }
             }
             await SceneLoader.Unload(loadingScene);
@@ -78,7 +80,7 @@ public class GUISceneLoader : MonoBehaviour
     public void LoadKeyScene(int num)
     {
         MethodAudio.OnNext(num);
-        MethodKeyScene[num].LoadTypeScene(loadingScene).Forget();
+        MethodKeyScene[num].LoadTypeScene(loadingScene, managerScene).Forget();
     }
 }
 
@@ -101,7 +103,7 @@ public class KeySceneLoad
     }
 
 
-    public async UniTask LoadTypeScene(SceneNameEnum loadingScene = SceneNameEnum.None)
+    public async UniTask LoadTypeScene(SceneNameEnum loadingScene = SceneNameEnum.None, SceneNameEnum managerScene = SceneNameEnum.None)
     {
         SceneNameEnum sceneName = scenes;
         var activescene = SceneManager.GetActiveScene();
@@ -127,7 +129,7 @@ public class KeySceneLoad
                 break;
 
             case LoadSceneType.OnlyManegerSingle:
-                await SceneLoader.OnlyScenes(sceneName, SceneNameEnum.Maneger, loadingScene);
+                await SceneLoader.OnlyScenes(sceneName, managerScene, loadingScene);
                 break;
 
             case LoadSceneType.LoadWaiting:

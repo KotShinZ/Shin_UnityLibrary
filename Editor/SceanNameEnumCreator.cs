@@ -41,13 +41,13 @@ public static class SceneNameEnumCreator
     /// <summary>
     /// ƒV[ƒ“–¼‚ğŠÇ—‚·‚é Enum ‚ğì¬‚µ‚Ü‚·
     /// </summary>
-    public static void Create()
+    public static void Create(bool showLog = true)
     {
         if (!CanCreate()) return;
 
         CreateScript();
 
-        EditorUtility.DisplayDialog(FILENAME, "ì¬‚ªŠ®—¹‚µ‚Ü‚µ‚½", "OK");
+        if(showLog) EditorUtility.DisplayDialog(FILENAME, "ì¬‚ªŠ®—¹‚µ‚Ü‚µ‚½", "OK");
     }
 
     /// <summary>
