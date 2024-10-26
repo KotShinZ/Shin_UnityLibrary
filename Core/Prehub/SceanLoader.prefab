@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   manegerScene: 3
+  dontMultipleLoad: 1
 --- !u!114 &4539588139583583539
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,3 +63,4 @@ MonoBehaviour:
   UpdateKeyScene: []
   MethodKeyScene: []
   loadingScene: 5
+  managerScene: 3
