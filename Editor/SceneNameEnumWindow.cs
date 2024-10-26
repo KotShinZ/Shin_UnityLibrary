@@ -5,12 +5,20 @@ using UnityEditor;
 
 public class SceneNameEnumWindow : EditorWindow
 {
+    public static string defaultPath = "Assets/Shin_UnityLibrary/Core/Shin_UnityLibrary_Data/SceneNameEnum.cs";
     public string folderPath = "Assets/Shin_UnityLibrary/Core/Shin_UnityLibrary_Data/SceneNameEnum.cs";
 
     [MenuItem("Tools/Shin_UnityLibrary/SceneNameEnumWindow")]
     public static void ShowWindow()
     {
         GetWindow<SceneNameEnumWindow>("SceneNameEnumWindow");
+    }
+
+    [InitializeOnLoadMethod]
+    static void InitCreate()
+    {
+        SceneNameEnumCreator.PATH = defaultPath;
+        SceneNameEnumCreator.Create();
     }
 
     private void OnGUI()
