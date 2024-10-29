@@ -38,6 +38,11 @@ public class AudioSet
     {
         this.clip = clip;
     }
+    public AudioSet(AudioClip clip, float volume)
+    {
+        this.clip = clip;
+        this.volume = volume;
+    }
 
     public async void Play(AudioSource source, bool loop = false)
     {
