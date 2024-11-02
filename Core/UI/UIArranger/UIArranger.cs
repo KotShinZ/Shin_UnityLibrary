@@ -30,7 +30,7 @@ public class UIArranger : MonoBehaviour
 
     public UnityEvent<GameObject> OnInstantiated = new UnityEvent<GameObject>();
 
-    public Action<GameObject, Vector2> instantiatedAction;
+    public Action<GameObject, Vector2Int> instantiatedAction;
 
     public virtual void Start()
     {
@@ -145,7 +145,7 @@ public class UIArranger : MonoBehaviour
             SetObjectParam(rect, i, j);
             rect.gameObject.SetActive(true);
             OnInstantiated?.Invoke(rect.gameObject);
-            instantiatedAction?.Invoke(rect.gameObject, new Vector2(i,j));
+            instantiatedAction?.Invoke(rect.gameObject, new Vector2Int(i,j));
             return false;
         }, newGenerate: true);
     }
