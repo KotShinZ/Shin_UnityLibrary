@@ -9,6 +9,16 @@ public class DelayEvent : MonoBehaviour
 {
     public UnityEvent OnDelayed = new();
     public float delay;
+    public bool invokeOnStart = false;
+
+    private void Start()
+    {
+        if (invokeOnStart)
+        {
+            Invoke();
+        }
+
+    }
 
     public void Invoke()
     {

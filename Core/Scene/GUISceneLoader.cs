@@ -65,7 +65,7 @@ public class GUISceneLoader : MonoBehaviour
                     await SceneLoader.WaitTime(k.delay);
                 }
             }
-            await SceneLoader.LoadNoActive(loadingScene);
+            if(loadingScene != SceneNameEnum.None) await SceneLoader.LoadNoActive(loadingScene);
             foreach (var k in UpdateKeyScene)
             {
                 if (k.flag)
@@ -73,7 +73,7 @@ public class GUISceneLoader : MonoBehaviour
                     await k.LoadTypeScene(loadingScene, managerScene);
                 }
             }
-            await SceneLoader.Unload(loadingScene);
+            if (loadingScene != SceneNameEnum.None) await SceneLoader.Unload(loadingScene);
         }
     }
 
