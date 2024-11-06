@@ -26,26 +26,26 @@ public class SpeedLimitable2D : MonoBehaviour
     }
 
     /// <summary>
-    /// ƒWƒƒƒ“ƒv‘¬“x‚ğ§ŒÀ‚·‚é
+    /// ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½xï¿½ğ§Œï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     void LimitVelocity()
     {
         bool isLimit = false;
 
-        var prog = Utils.Projection(_rigidbody.velocity, gravityDirection * -1); //ƒWƒƒƒ“ƒv•ûŒü‚É‘Î‚·‚é³Ë‰eƒxƒNƒgƒ‹
+        var prog = Utils.Projection(_rigidbody.linearVelocity, gravityDirection * -1); //ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½É‘Î‚ï¿½ï¿½é³ï¿½Ë‰eï¿½xï¿½Nï¿½gï¿½ï¿½
         Vector3 vertical = prog;
         if (prog.magnitude > upingLimitSpeed)
         {
             isLimit = true;
-            vertical = gravityDirection * upingLimitSpeed; //ã¸‚Ì§ŒÀ
+            vertical = gravityDirection * upingLimitSpeed; //ï¿½ã¸ï¿½Ìï¿½ï¿½ï¿½
         }
         else if (prog.magnitude < fallingLimitSpeed * -1)
         {
             isLimit = true;
-            vertical = gravityDirection * fallingLimitSpeed; //‰º~‚Ì§ŒÀ
+            vertical = gravityDirection * fallingLimitSpeed; //ï¿½ï¿½ï¿½~ï¿½Ìï¿½ï¿½ï¿½
         }
 
-        var horizontal = _rigidbody.velocity.VectorTwoToThree() - prog;  //…•½•ûŒü‚Ì§ŒÀ
+        var horizontal = _rigidbody.linearVelocity.VectorTwoToThree() - prog;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
         if (horizontal.magnitude > horizontalLimitSpeed)
         {
             isLimit = true;
@@ -54,16 +54,16 @@ public class SpeedLimitable2D : MonoBehaviour
 
         if (isLimit)
         {
-            if ((vertical + horizontal).IsNaN() == false) _rigidbody.velocity = vertical + horizontal;
+            if ((vertical + horizontal).IsNaN() == false) _rigidbody.linearVelocity = vertical + horizontal;
         }
     }
 
     /// <summary>
-    /// ã¸’†‚©‚Ç‚¤‚©
+    /// ï¿½ã¸ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
     /// </summary>
     /// <returns></returns>
     public bool isUping()
     {
-        return Vector3.Dot(_rigidbody.velocity, gravityDirection * -1) > 0;
+        return Vector3.Dot(_rigidbody.linearVelocity, gravityDirection * -1) > 0;
     }
 }

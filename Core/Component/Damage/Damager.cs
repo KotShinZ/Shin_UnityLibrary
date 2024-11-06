@@ -9,7 +9,7 @@ using Cysharp.Threading.Tasks;
 [RequireComponent (typeof(Collider))]
 public class Damager : HIttedTaged<Damageable>
 {
-    [TitleDescription] public string title = "G‚ê‚é‚Æƒ_ƒ[ƒW‚ğ—^‚¦‚é";
+    [TitleDescription] public string title = "ï¿½Gï¿½ï¿½ï¿½Æƒ_ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½^ï¿½ï¿½ï¿½ï¿½";
 
     public bool canDamege = true;
     public int damageAmout = 1;
@@ -27,7 +27,7 @@ public class Damager : HIttedTaged<Damageable>
         var b = TryGetComponent<Rigidbody>(out r);
         if(b && speadThreshold != -1)
         {
-            if (r.velocity.magnitude < speadThreshold) return;
+            if (r.linearVelocity.magnitude < speadThreshold) return;
         }
        if(canDamege)
         {

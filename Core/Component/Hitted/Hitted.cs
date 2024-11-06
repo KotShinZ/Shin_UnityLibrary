@@ -42,7 +42,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     }
 
     /// <summary>
-    /// Œ»İ“–‚½‚Á‚½ƒtƒŒ[ƒ€‚©‚Ç‚¤‚©‚Ìˆ—
+    /// ï¿½ï¿½ï¿½İ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
     /// </summary>
     void NowHit()
     {
@@ -61,7 +61,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     }
 
     /// <summary>
-    /// “–‚½‚Á‚½‚Ìˆ—
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
     /// </summary>
     /// <param name="col"></param>
     void HitCollision(Collision col)
@@ -90,7 +90,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     }
 
     /// <summary>
-    /// CollisionData‚©‚ç‚»‚Ì‘¼‚Ìƒf[ƒ^‚ğİ’è
+    /// CollisionDataï¿½ï¿½ï¿½ç‚»ï¿½Ì‘ï¿½ï¿½Ìƒfï¿½[ï¿½^ï¿½ï¿½İ’ï¿½
     /// </summary>
     /// <param name="data"></param>
     void SetEnterCollision(CollisionData<T> data)
@@ -119,7 +119,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     }
 
     /// <summary>
-    /// “–‚½‚Á‚Ä‚¢‚é‚±‚Æ‚É‚È‚é‚©‚Ç‚¤‚©‚ğŒˆ‚ß‚ê‚é
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚±ï¿½Æ‚É‚È‚é‚©ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß‚ï¿½ï¿½
     /// </summary>
     /// <param name="col"></param>
     /// <returns></returns>
@@ -132,7 +132,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     {
         if(_rigidbody == null) _rigidbody = GetComponent<Rigidbody>();
         if (_rigidbody == null) return true;
-        if(speedRange.IsInRange(_rigidbody.velocity.magnitude) || (speedRange.max == 50 && _rigidbody.velocity.magnitude > 50))
+        if(speedRange.IsInRange(_rigidbody.linearVelocity.magnitude) || (speedRange.max == 50 && _rigidbody.linearVelocity.magnitude > 50))
         {
             return true;
         }
@@ -142,7 +142,7 @@ public abstract class Hitted<T> : MonoBehaviour where T : Component
     public virtual void Hit(CollisionData<T> t) { }
 
     /// <summary>
-    /// ƒQ[ƒ€ƒIƒuƒWƒFƒNƒg‚©‚çƒRƒ“ƒ|[ƒlƒ“ƒg‚ğæ“¾
+    /// ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½|ï¿½[ï¿½lï¿½ï¿½ï¿½gï¿½ï¿½ï¿½æ“¾
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="obj"></param>

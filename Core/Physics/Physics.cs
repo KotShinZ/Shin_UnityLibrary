@@ -9,7 +9,7 @@ public class Shin_Physics : MonoBehaviour
         float power = force.magnitude;
         Vector3 direction = force.normalized;
         Vector3 targetVelocity = (isMass ? power / rigidbody.mass : power) * direction;
-        Vector3 velocityDirection = Vector3.Dot(rigidbody.velocity, direction.normalized) * direction.normalized; //ŠÄ‹‘ÎÛƒxƒNƒgƒ‹
+        Vector3 velocityDirection = Vector3.Dot(rigidbody.linearVelocity, direction.normalized) * direction.normalized; //ï¿½Äï¿½ï¿½ÎÛƒxï¿½Nï¿½gï¿½ï¿½
 
         rigidbody.AddForce((targetVelocity - velocityDirection) * power * feedBack, ForceMode.Acceleration);
     }
