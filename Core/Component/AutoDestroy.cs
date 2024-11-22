@@ -3,13 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using UnityEngine.Events;
 
 public class AutoDestroy : MonoBehaviour
 {
     public float time = 3;
-    float nowTime = 0;
+    public bool isDisable = false;
+    [Readonly] public float nowTime = 0;
 
     public Predicate<AutoDestroy> predicates = null;
+    public UnityEvent PreDestroy = new UnityEvent();
 
     void Update()
     {
@@ -22,6 +25,8 @@ public class AutoDestroy : MonoBehaviour
     }
     public void Destroy()
     {
-        Destroy(gameObject);
+        PreDestroy?.Invoke();
+        if(isDisable == false) Destroy(gameObject);
+        else gameObject.SetActive(false);
     }
 }
