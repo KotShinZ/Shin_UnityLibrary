@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
@@ -13,6 +13,13 @@ public class AutoDestroy : MonoBehaviour
 
     public Predicate<AutoDestroy> predicates = null;
     public UnityEvent PreDestroy = new UnityEvent();
+    public UnityEvent OnEnabled = new UnityEvent();
+
+    private void OnEnable()
+    {
+        nowTime = 0;
+        OnEnabled?.Invoke();
+    }
 
     void Update()
     {
@@ -27,6 +34,10 @@ public class AutoDestroy : MonoBehaviour
     {
         PreDestroy?.Invoke();
         if(isDisable == false) Destroy(gameObject);
-        else gameObject.SetActive(false);
+        else
+        {
+            nowTime = 0;
+            gameObject.SetActive(false);
+        }
     }
 }
