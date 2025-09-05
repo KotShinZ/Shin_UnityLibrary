@@ -107,7 +107,7 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
     public void OnEvent(EventData photonEvent)
     {
         if(PhotonNetwork.IsConnected == false) return;
-        Debug.Log("OnEvent");
+        //Debug.Log("OnEvent");
         var eventCode = photonEvent.Code;
 
         if (eventCode != CustomInstantiateEventCode)

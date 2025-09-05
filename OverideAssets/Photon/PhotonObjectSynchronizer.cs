@@ -35,12 +35,11 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         //Debug.Log(photonView.IsMine);
         //if (!photonView.IsMine) return;
         if (setMine == false) return;
-        Debug.Log("PhotonObjectSynchronizer Start");
 
         if (PhotonNetwork.IsConnected == false) return;
         if(isHostOnly && PhotonNetwork.IsMasterClient == false) return;
         if (objectOnlyClient) return;
-        Debug.Log("PhotonObjectSynchronizer Start 2");
+        Debug.Log("PhotonObjectSynchronizer Start");
 
         photonView = GetComponent<PhotonView>();
         PhotonNetwork.AllocateViewID(photonView);
@@ -49,7 +48,6 @@ public class PhotonObjectSynchronizer : MonoBehaviour
 
         // PrefabのtransformとViewIDを通知する準備をする
         var _prefabname = GetPrefabName();
-        Debug.Log(_prefabname);
         var data = new object[]
         {
                 _prefabname,
@@ -62,20 +60,22 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         var raiseEventOptions = new RaiseEventOptions
         {
             Receivers = ReceiverGroup.Others,
-            CachingOption = EventCaching.AddToRoomCache
+            CachingOption = EventCaching.DoNotCache
         };
 
         var sendOptions = new SendOptions
         {
             Reliability = true
         };
-
+        Debug.Log(_prefabname + "のInstantiateEvent送信");
         // 同じRoom内の他のユーザーへ通知
         PhotonNetwork.RaiseEvent(CustomInstantiateEventCode, data, raiseEventOptions, sendOptions);
     }
 
     public string GetPrefabName()
     {
+        Debug.Log(gameObject.name);
+        Debug.Log(RemoveTrailingNumberInParentheses(gameObject.name));
         return isThisPrefabName ? RemoveTrailingNumberInParentheses(gameObject.name) : prefab_name;
     }
 
@@ -90,7 +90,6 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         {
             input = Regex.Replace(input, pattern, "");
         }
-        Debug.Log(input);
         // 余分な空白を削除
         return input.Trim();
     }
