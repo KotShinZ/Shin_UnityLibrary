@@ -96,7 +96,7 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
                 return prefab;
             }
         }
-        Debug.LogError("ネットワークPrefabが見つかりません: " + name);
+        Debug.LogWarning("ネットワークPrefabが見つかりません: " + name);
         return null;
     }
 
@@ -115,16 +115,16 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
             return;
         }
         var data = (object[])photonEvent.CustomData;
-        Debug.Log("InstantiateEvent受信" + (string)data[0]);
+        //Debug.Log("InstantiateEvent受信" + (string)data[0]);
 
         // 受信したtransformを設定
+        
         var obj = Instantiate(GetNetworkPrefab((string)data[0]), (Vector3)data[1], (Quaternion)data[2]);
         if(obj.TryGetComponent(out PhotonObjectSynchronizer pos))
         {
             pos.setMine = false;
         }
         
-        Debug.Log("Instantiate: " + (string)data[0]);
         // Photon
         var photonView = obj.GetComponent<PhotonView>();
 
@@ -132,6 +132,7 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
         photonView.ViewID = (int)data[3];
 
         generatingPrefabName = null;
+        
     }
 
     public PhotonView AddPhotonComponents(GameObject obj)

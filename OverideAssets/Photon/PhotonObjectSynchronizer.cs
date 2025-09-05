@@ -39,7 +39,6 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         if (PhotonNetwork.IsConnected == false) return;
         if(isHostOnly && PhotonNetwork.IsMasterClient == false) return;
         if (objectOnlyClient) return;
-        Debug.Log("PhotonObjectSynchronizer Start");
 
         photonView = GetComponent<PhotonView>();
         PhotonNetwork.AllocateViewID(photonView);
@@ -67,15 +66,13 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         {
             Reliability = true
         };
-        Debug.Log(_prefabname + "のInstantiateEvent送信");
+        //Debug.Log(_prefabname + "のInstantiateEvent送信");
         // 同じRoom内の他のユーザーへ通知
         PhotonNetwork.RaiseEvent(CustomInstantiateEventCode, data, raiseEventOptions, sendOptions);
     }
 
     public string GetPrefabName()
     {
-        Debug.Log(gameObject.name);
-        Debug.Log(RemoveTrailingNumberInParentheses(gameObject.name));
         return isThisPrefabName ? RemoveTrailingNumberInParentheses(gameObject.name) : prefab_name;
     }
 
