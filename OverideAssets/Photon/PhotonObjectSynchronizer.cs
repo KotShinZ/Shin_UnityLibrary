@@ -28,16 +28,19 @@ public class PhotonObjectSynchronizer : MonoBehaviour
     void Start()
     {
         photonView = GetComponent<PhotonView>();
-
         // このオブジェクトが自分のものでないなら（他の誰かが生成通知を送ってきたものなら）、
         // 何もせず処理を終了する。
-        if(setMine) photonView.RequestOwnership();
-        if (!photonView.IsMine) return;
+        //Debug.Log(photonView.IsMine);
+        //if (setMine) photonView.RequestOwnership();
+        //Debug.Log(photonView.IsMine);
+        //if (!photonView.IsMine) return;
+        if (setMine == false) return;
+        Debug.Log("PhotonObjectSynchronizer Start");
 
         if (PhotonNetwork.IsConnected == false) return;
         if(isHostOnly && PhotonNetwork.IsMasterClient == false) return;
         if (objectOnlyClient) return;
-        
+        Debug.Log("PhotonObjectSynchronizer Start 2");
 
         photonView = GetComponent<PhotonView>();
         PhotonNetwork.AllocateViewID(photonView);
