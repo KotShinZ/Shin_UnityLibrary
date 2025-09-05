@@ -119,7 +119,6 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
 
         // 受信したtransformを設定
         var obj = Instantiate(GetNetworkPrefab((string)data[0]), (Vector3)data[1], (Quaternion)data[2]);
-        obj.GetComponent<PhotonObjectSynchronizer>().objectClient = true;
 
         // Photon
         var photonView = obj.GetComponent<PhotonView>();
@@ -154,4 +153,5 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
 
         return photonView;
     }
+
 }

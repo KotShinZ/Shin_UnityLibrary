@@ -1,4 +1,4 @@
-using ExitGames.Client.Photon;
+﻿using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Collections;
@@ -6,33 +6,42 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
 
+/// <summary>
+/// オブジェクトが生成された時に、同じRoom内の他のユーザーにも同じオブジェクトを生成するように通知する。
+/// </summary>
 [RequireComponent(typeof(PhotonView))]
 public class PhotonObjectSynchronizer : MonoBehaviour
 {
     private const byte CustomInstantiateEventCode = 1;
     public bool isHostOnly = false;
-    public bool isThisPrefabName = true;
+    public bool isThisPrefabName = false;
     public string prefab_name;
     public static List<string> instantiatedViewIDs;
 
     protected PhotonView photonView;
 
-    public bool objectClient = false;
+    public bool objectOnlyClient = false;
 
     // Start is called before the first frame update
     void Start()
     {
+        photonView = GetComponent<PhotonView>();
+
+        // このオブジェクトが自分のものでないなら（他の誰かが生成通知を送ってきたものなら）、
+        // 何もせず処理を終了する。
+        if (!photonView.IsMine) return;
+
         if (PhotonNetwork.IsConnected == false) return;
         if(isHostOnly && PhotonNetwork.IsMasterClient == false) return;
-        if (objectClient) return;
+        if (objectOnlyClient) return;
         
 
         photonView = GetComponent<PhotonView>();
-         PhotonNetwork.AllocateViewID(photonView);
+        PhotonNetwork.AllocateViewID(photonView);
 
         var obj = gameObject;
 
-        // Prefab��transform��ViewID��ʒm���鏀��������
+        // PrefabのtransformとViewIDを通知する準備をする
         var data = new object[]
         {
                 GetPrefabName(),
@@ -41,7 +50,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
                 photonView.ViewID,
         };
 
-        // ����Room�̎����ȊO�ɒʒm
+        // 同じRoomの自分以外に通知
         var raiseEventOptions = new RaiseEventOptions
         {
             Receivers = ReceiverGroup.Others,
@@ -53,7 +62,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
             Reliability = true
         };
 
-        // ����Room���̑��̃��[�U�[�֒ʒm
+        // 同じRoom内の他のユーザーへ通知
         PhotonNetwork.RaiseEvent(CustomInstantiateEventCode, data, raiseEventOptions, sendOptions);
     }
 
@@ -62,19 +71,19 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         return isThisPrefabName ? RemoveTrailingNumberInParentheses(gameObject.name) : prefab_name;
     }
 
-    // ������̖����ɂ��� (����) ����菜���֐�
+    // 文字列の末尾にある (数字) を取り除く関数
     public static string RemoveTrailingNumberInParentheses(string input)
     {
-        // ���ʂƂ��̒��g���폜���鐳�K�\��
+        // 括弧とその中身を削除する正規表現
         string pattern = @"\([^()]*\)";
 
-        // ����q�ɂȂ������ʂɂ��Ή�
+        // 入れ子になった括弧にも対応
         while (Regex.IsMatch(input, pattern))
         {
             input = Regex.Replace(input, pattern, "");
         }
 
-        // �]���ȋ󔒂��폜
+        // 余分な空白を削除
         return input.Trim();
     }
 }
