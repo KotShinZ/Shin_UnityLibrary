@@ -42,9 +42,11 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         var obj = gameObject;
 
         // PrefabのtransformとViewIDを通知する準備をする
+        var _prefabname = GetPrefabName();
+        Debug.Log(_prefabname);
         var data = new object[]
         {
-                GetPrefabName(),
+                _prefabname,
                 obj.transform.position,
                 obj.transform.rotation,
                 photonView.ViewID,
@@ -82,7 +84,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         {
             input = Regex.Replace(input, pattern, "");
         }
-
+        Debug.Log(input);
         // 余分な空白を削除
         return input.Trim();
     }

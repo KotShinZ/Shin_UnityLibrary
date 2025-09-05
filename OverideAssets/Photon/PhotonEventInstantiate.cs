@@ -107,19 +107,19 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
     public void OnEvent(EventData photonEvent)
     {
         if(PhotonNetwork.IsConnected == false) return;
-
+        Debug.Log("OnEvent");
         var eventCode = photonEvent.Code;
 
         if (eventCode != CustomInstantiateEventCode)
         {
             return;
         }
-
         var data = (object[])photonEvent.CustomData;
+        Debug.Log("InstantiateEvent受信" + (string)data[0]);
 
         // 受信したtransformを設定
         var obj = Instantiate(GetNetworkPrefab((string)data[0]), (Vector3)data[1], (Quaternion)data[2]);
-
+        Debug.Log("Instantiate: " + (string)data[0]);
         // Photon
         var photonView = obj.GetComponent<PhotonView>();
 
