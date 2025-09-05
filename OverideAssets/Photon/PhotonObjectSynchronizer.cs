@@ -22,6 +22,8 @@ public class PhotonObjectSynchronizer : MonoBehaviour
 
     public bool objectOnlyClient = false;
 
+    public bool setMine = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +31,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
 
         // このオブジェクトが自分のものでないなら（他の誰かが生成通知を送ってきたものなら）、
         // 何もせず処理を終了する。
+        if(setMine) photonView.RequestOwnership();
         if (!photonView.IsMine) return;
 
         if (PhotonNetwork.IsConnected == false) return;
