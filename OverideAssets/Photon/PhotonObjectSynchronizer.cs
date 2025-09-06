@@ -38,8 +38,8 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         //if (setMine) photonView.RequestOwnership();
         //Debug.Log(photonView.IsMine);
         //if (!photonView.IsMine) return;
-        if(setMine) OnlyHostEvent.Invoke();
-        else OnlyClientEvent.Invoke();
+        //if(setMine) OnlyHostEvent.Invoke();
+        //else OnlyClientEvent.Invoke();
 
         if (setMine == false) return;
 
