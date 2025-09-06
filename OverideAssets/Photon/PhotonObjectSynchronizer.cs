@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Text.RegularExpressions;
+using UnityEngine.Events;
 
 /// <summary>
 /// オブジェクトが生成された時に、同じRoom内の他のユーザーにも同じオブジェクトを生成するように通知する。
@@ -24,6 +25,9 @@ public class PhotonObjectSynchronizer : MonoBehaviour
 
     public bool setMine = true;
 
+    public UnityEvent OnlyHostEvent = new UnityEvent();
+    public UnityEvent OnlyClientEvent = new UnityEvent();
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +38,9 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         //if (setMine) photonView.RequestOwnership();
         //Debug.Log(photonView.IsMine);
         //if (!photonView.IsMine) return;
+        if(setMine) OnlyHostEvent.Invoke();
+        else OnlyClientEvent.Invoke();
+
         if (setMine == false) return;
 
         if (PhotonNetwork.IsConnected == false) return;
