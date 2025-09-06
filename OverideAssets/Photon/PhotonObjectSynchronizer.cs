@@ -14,7 +14,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
 {
     private const byte CustomInstantiateEventCode = 1;
     public bool isHostOnly = false;
-    public bool isThisPrefabName = false;
+    public bool isThisPrefabName = true;
     public string prefab_name;
     public static List<string> instantiatedViewIDs;
 
