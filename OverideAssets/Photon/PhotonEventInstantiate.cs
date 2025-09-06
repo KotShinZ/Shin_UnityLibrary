@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
 {
-    private const byte CustomInstantiateEventCode = 1;
+    protected virtual byte CustomInstantiateEventCode => 1;
     [Header("ネットワークを通して生成するPrefabは全てこの中にいれておく")]
     public List<GameObject> networkPrefabs;
 
@@ -21,70 +21,6 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
     private void OnDisable()
     {
         PhotonNetwork.RemoveCallbackTarget(this);
-    }
-
-    /// <summary>
-    /// ネットワークが繋がっている場合はオンライン上の全てのプレイヤーにPrefabを生成する。繋がっていない場合はローカルにのみ生成する。
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <param name="position"></param>
-    /// <param name="rotation"></param>
-    /// <returns></returns>
-    public GameObject Instantiate(GameObject prefab, Vector3 position, Quaternion rotation)
-    {
-        if (PhotonNetwork.IsConnected)
-        {
-            return NetworkInstantiate(prefab, position, rotation);
-        }
-        else
-        {
-            return GameObject.Instantiate(prefab, position, rotation);
-        }
-    }
-
-    /// <summary>
-    /// オンライン上の全てのプレイヤーにPrefabを生成する。PhotonView付きでリストに入れているPrefabを指定すること。
-    /// </summary>
-    /// <param name="prefab"></param>
-    /// <param name="position"></param>
-    /// <param name="rotation"></param>
-    /// <returns></returns>
-    public GameObject NetworkInstantiate(GameObject prefab, Vector3 position, Quaternion rotation)
-    {
-        if (!PhotonNetwork.IsConnected) return null;
-
-        // --- 1. まず、自分自身のゲーム内にオブジェクトを生成する ---
-        GameObject newObject = GameObject.Instantiate(prefab.gameObject, position, rotation);
-        var newPhotonView = AddPhotonComponents(newObject);    // PhotonViewとPhotonTransformViewを追加する
-
-        // --- 2. 他のプレイヤーに同じプレハブを生成するように依頼する ---
-        SendInstantiateMessage(newPhotonView, position, rotation);
-
-        return newObject;
-    }
-
-    /// <summary>
-    /// 他のプレイヤーに同じプレハブを生成するように依頼する
-    /// </summary>
-    /// <param name="newPhotonView"></param>
-    /// <param name="position"></param>
-    /// <param name="rotation"></param>
-    public void SendInstantiateMessage(PhotonView newPhotonView, Vector3 position, Quaternion rotation)
-    {
-        // 2. 新しいネットワークIDを確保し、生成したオブジェクトに割り当てる
-        int viewID = PhotonNetwork.AllocateViewID(newPhotonView.ViewID);
-
-        // 3. 他のプレイヤーに生成を依頼するためのイベントを送信する
-        object[] content = new object[]
-        {
-            newPhotonView.gameObject.name,
-            position,
-            rotation,
-            viewID // 自分で確保したIDを他の人にも教える
-        };
-
-        RaiseEventOptions raiseEventOptions = new RaiseEventOptions { Receivers = ReceiverGroup.Others };
-        PhotonNetwork.RaiseEvent(CustomInstantiateEventCode, content, raiseEventOptions, SendOptions.SendReliable);
     }
 
     public GameObject GetNetworkPrefab(string name)
@@ -131,33 +67,14 @@ public class PhotonEventInstantiate : MonoBehaviour, IOnEventCallback
         // 受信したViewIDを用いて同期する
         photonView.ViewID = (int)data[3];
 
+        OnInstantiate(obj, data);
+
         generatingPrefabName = null;
         
     }
 
-    public PhotonView AddPhotonComponents(GameObject obj)
-    {
-        // Photon
-        if (obj.TryGetComponent<PhotonView>(out PhotonView photonView) == false)
-        {
-            photonView = obj.AddComponent<PhotonView>();
-
-            var photonTransformView = obj.AddComponent<PhotonTransformView>();
-
-            // 初期化を行う
-            photonView.ObservedComponents = new List<Component>();
-
-            // Synchronizeするものを設定
-            photonTransformView.m_SynchronizePosition = true;
-            photonTransformView.m_SynchronizeRotation = true;
-            photonTransformView.m_SynchronizeScale = false;
-            photonTransformView.m_UseLocal = true;
-
-            // PhotonViewに紐付ける
-            photonView.ObservedComponents.Add(photonTransformView);
-        }
-
-        return photonView;
+    protected virtual void OnInstantiate(GameObject obj, object[] data) 
+    { 
+        
     }
-
 }

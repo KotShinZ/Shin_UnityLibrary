@@ -13,7 +13,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(PhotonView))]
 public class PhotonObjectSynchronizer : MonoBehaviour
 {
-    private const byte CustomInstantiateEventCode = 1;
+    protected virtual byte CustomInstantiateEventCode => 1;
     public bool isHostOnly = false;
     public bool isThisPrefabName = true;
     public string prefab_name;
@@ -50,17 +50,7 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         photonView = GetComponent<PhotonView>();
         PhotonNetwork.AllocateViewID(photonView);
 
-        var obj = gameObject;
-
-        // PrefabのtransformとViewIDを通知する準備をする
-        var _prefabname = GetPrefabName();
-        var data = new object[]
-        {
-                _prefabname,
-                obj.transform.position,
-                obj.transform.rotation,
-                photonView.ViewID,
-        };
+        var data = CreateSendData();
 
         // 同じRoomの自分以外に通知
         var raiseEventOptions = new RaiseEventOptions
@@ -76,6 +66,23 @@ public class PhotonObjectSynchronizer : MonoBehaviour
         //Debug.Log(_prefabname + "のInstantiateEvent送信");
         // 同じRoom内の他のユーザーへ通知
         PhotonNetwork.RaiseEvent(CustomInstantiateEventCode, data, raiseEventOptions, sendOptions);
+    }
+
+    protected virtual object[] CreateSendData()
+    {
+        var obj = gameObject;
+
+        // PrefabのtransformとViewIDを通知する準備をする
+        var _prefabname = GetPrefabName();
+        var data = new object[]
+        {
+                _prefabname,
+                obj.transform.position,
+                obj.transform.rotation,
+                photonView.ViewID,
+        };
+
+        return data;
     }
 
     public string GetPrefabName()
